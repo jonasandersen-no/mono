@@ -15,6 +15,14 @@ public class AccountService {
     this.repository = repository;
   }
 
+  @Transactional
+  public Account registerAccount(String username, String password) {
+    Account account = new Account();
+    account.setUsername(username);
+    account.setPassword(password);
+    return repository.save(account);
+  }
+
   @Transactional(readOnly = true)
   public Account findAccountById(AccountId accountId) {
     return repository.findById(accountId)

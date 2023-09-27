@@ -1,6 +1,7 @@
 package com.bjoggis.mono.user.adapter.in;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import com.bjoggis.mono.user.application.AccountService;
 import com.bjoggis.mono.user.application.TestAccountServiceBuilder;
@@ -35,5 +36,16 @@ class AccountControllerTest {
     assertEquals(lastAccountId.id(), test.id());
     assertEquals("username", test.username());
 
+  }
+
+  @Test
+  void registerAccount() {
+    AccountService service = new TestAccountServiceBuilder().build();
+    AccountController controller = new AccountController(service);
+
+    AccountResource test = controller.register(new RegisterRequest("username", "password"));
+
+    assertNotNull(test.id());
+    assertEquals("username", test.username());
   }
 }

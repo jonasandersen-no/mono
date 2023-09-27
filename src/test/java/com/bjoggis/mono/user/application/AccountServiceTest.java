@@ -12,6 +12,19 @@ import org.junit.jupiter.api.Test;
 class AccountServiceTest {
 
   @Test
+  void registerAccount() {
+    TestAccountServiceBuilder builder = new TestAccountServiceBuilder();
+
+    AccountService service = builder.build();
+
+    Account account = service.registerAccount("username", "password");
+
+    assertNotNull(account.getId());
+    assertEquals("username", account.getUsername());
+    assertEquals("*".repeat(16), account.getPassword());
+  }
+
+  @Test
   void findAccountById() {
     Account account = new AccountBuilder().withDefaults().build();
 
@@ -29,7 +42,6 @@ class AccountServiceTest {
     assertNotNull(foundAccount);
     assertEquals(lastAccountId, foundAccount.getId());
   }
-
 
   @Test
   void findAccountByUsername() {
