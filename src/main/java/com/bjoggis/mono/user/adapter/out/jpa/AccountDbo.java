@@ -1,5 +1,7 @@
-package com.bjoggis.mono.user;
+package com.bjoggis.mono.user.adapter.out.jpa;
 
+import com.bjoggis.mono.user.domain.Account;
+import com.bjoggis.mono.user.domain.AccountId;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,8 +10,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "account", schema = "authorization", catalog = "authorization")
-public class Account {
+@Table(name = "account", catalog = "authorization")
+class AccountDbo {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,6 +21,24 @@ public class Account {
   private String username;
 
   private String password;
+
+  public static AccountDbo from(Account account) {
+    AccountDbo accountDbo = new AccountDbo();
+    if (account.getId() != null) {
+      accountDbo.setId(account.getId().id());
+    }
+    accountDbo.setUsername(account.getUsername());
+    accountDbo.setPassword(account.getPassword());
+    return accountDbo;
+  }
+
+  public Account asAccount() {
+    Account account = new Account();
+    account.setId(AccountId.of(id));
+    account.setUsername(username);
+    account.setPassword(password);
+    return account;
+  }
 
   public String getUsername() {
     return username;

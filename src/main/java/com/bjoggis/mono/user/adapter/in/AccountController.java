@@ -1,6 +1,8 @@
-package com.bjoggis.mono.user;
+package com.bjoggis.mono.user.adapter.in;
 
-import jakarta.persistence.EntityNotFoundException;
+import com.bjoggis.mono.user.application.AccountService;
+import com.bjoggis.mono.user.domain.Account;
+import com.bjoggis.mono.user.domain.AccountId;
 import java.security.Principal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,24 +14,20 @@ import org.springframework.web.bind.annotation.RestController;
 class AccountController {
 
   private final AccountService service;
-  private final AccountAssembler assembler;
 
-  public AccountController(AccountService service, AccountAssembler assembler) {
+  public AccountController(AccountService service) {
     this.service = service;
-    this.assembler = assembler;
   }
 
   @GetMapping("/me")
   AccountResource getMe(Principal principal) {
-    return service.findAccountByUsername(principal.getName())
-        .map(assembler)
-        .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+    Account account = service.findAccountByUsername(principal.getName());
+    return AccountResource.from(account);
   }
 
   @GetMapping("/{id}")
   AccountResource getAccount(@PathVariable Long id) {
-    return service.findAccountById(id)
-        .map(assembler)
-        .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+    Account account = service.findAccountById(AccountId.of(id));
+    return AccountResource.from(account);
   }
 }
