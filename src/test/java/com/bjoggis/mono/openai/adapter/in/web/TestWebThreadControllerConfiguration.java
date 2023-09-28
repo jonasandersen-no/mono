@@ -1,6 +1,6 @@
 package com.bjoggis.mono.openai.adapter.in.web;
 
-import com.bjoggis.mono.openai.application.ThreadService;
+import com.bjoggis.mono.openai.application.ChatThreadService;
 import com.bjoggis.mono.openai.application.port.ChatThreadRepository;
 import com.bjoggis.mono.openai.application.port.InMemoryChatThreadRepository;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -15,7 +15,7 @@ public class TestWebThreadControllerConfiguration {
   }
 
   @Bean
-  ThreadService threadService() {
-    return new ThreadService(chatThreadRepository());
+  ChatThreadService threadService() {
+    return new ChatThreadService(chatThreadRepository());
   }
 }

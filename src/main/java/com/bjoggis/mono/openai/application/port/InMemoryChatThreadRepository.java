@@ -4,11 +4,10 @@ import com.bjoggis.mono.openai.domain.ChatThread;
 import com.bjoggis.mono.openai.domain.ChatThreadId;
 import com.bjoggis.mono.openai.domain.ChatThreadState;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
-import org.springframework.stereotype.Component;
 
-@Component
 public class InMemoryChatThreadRepository implements ChatThreadRepository {
 
   //  private final Map<String, ChatThreadState> usernameToMemberMap = new ConcurrentHashMap<>();
@@ -17,15 +16,15 @@ public class InMemoryChatThreadRepository implements ChatThreadRepository {
 
 
   @Override
-  public ChatThread findById(ChatThreadId chatThreadId) {
-    return new ChatThread(idToMemberMap.get(chatThreadId));
+  public Optional<ChatThread> findById(ChatThreadId chatThreadId) {
+    return Optional.of(new ChatThread(idToMemberMap.get(chatThreadId)));
   }
 
   @Override
   public ChatThread save(ChatThread thread) {
     ChatThreadState chatThreadState = thread.memento();
     if (chatThreadState.chatThreadId() == null) {
-      ChatThreadId newId = ChatThreadId.of(String.valueOf(sequence.getAndIncrement()));
+      ChatThreadId newId = ChatThreadId.of(sequence.getAndIncrement());
       ChatThread copy = new ChatThread(chatThreadState);
       copy.setChatThreadId(newId);
       chatThreadState = copy.memento();

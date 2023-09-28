@@ -16,8 +16,14 @@ public class TestThreadServiceBuilder {
     chatThreadRepository = new InMemoryChatThreadRepository();
   }
 
-  public ThreadService build() {
-    return new ThreadService(chatThreadRepository);
+  public TestThreadServiceBuilder save(ChatThread thread) {
+    lastThread = chatThreadRepository.save(thread);
+    lastThreadId = lastThread.getChatThreadId();
+    return this;
+  }
+
+  public ChatThreadService build() {
+    return new ChatThreadService(chatThreadRepository);
   }
 
   public ChatThreadRepository getChatThreadRepository() {

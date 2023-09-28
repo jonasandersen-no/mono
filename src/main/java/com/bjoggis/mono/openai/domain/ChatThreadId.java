@@ -1,8 +1,8 @@
 package com.bjoggis.mono.openai.domain;
 
-public record ChatThreadId(String chatThreadId) {
+public record ChatThreadId(Long chatThreadId) {
 
-  public static ChatThreadId of(String chatThreadId) {
+  public static ChatThreadId of(Long chatThreadId) {
     return new ChatThreadId(chatThreadId);
   }
 }

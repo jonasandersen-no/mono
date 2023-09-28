@@ -1,5 +1,5 @@
 package com.bjoggis.mono.openai.domain;
 
-public record MessageId(String messageId) {
+public record MessageId(Long messageId) {
 
 }
