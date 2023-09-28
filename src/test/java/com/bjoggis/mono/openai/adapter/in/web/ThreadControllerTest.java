@@ -1,28 +1,24 @@
 package com.bjoggis.mono.openai.adapter.in.web;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import com.bjoggis.mono.openai.application.ThreadService;
+import com.bjoggis.mono.openai.application.port.InMemoryChatThreadRepository;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(controllers = ThreadController.class)
-@AutoConfigureMockMvc(addFilters = false)
-@ActiveProfiles("test")
 public class ThreadControllerTest {
 
-
-  @Autowired
-  MockMvc mockMvc;
-
   @Test
-  void postOfThreadEndpointCreatesANewThread() throws Exception {
-    mockMvc.perform(post("/v1/thread").with(csrf()))
-        .andExpect(status().isCreated());
+  void returnsThreadResponseWhen() {
+    InMemoryChatThreadRepository threadRepository = new InMemoryChatThreadRepository();
+    ThreadService threadService = new ThreadService(threadRepository);
+
+    ThreadController threadController = new ThreadController(threadService);
+    CreateThreadResponse response = threadController.createThread(new CreateThreadRequest(1L));
+
+    assertNotNull(response);
+    assertEquals(1L, response.accountId());
+    assertNotNull(response.chatThreadId());
   }
 }
