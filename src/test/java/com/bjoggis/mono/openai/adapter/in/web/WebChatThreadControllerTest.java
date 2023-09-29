@@ -6,6 +6,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.bjoggis.mono.openai.application.port.ChatThreadRepository;
+import com.bjoggis.mono.openai.domain.ChatThread;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,6 +26,9 @@ public class WebChatThreadControllerTest {
   @Autowired
   MockMvc mockMvc;
 
+  @Autowired
+  ChatThreadRepository repository;
+
   @Test
   void postOfThreadEndpointReturnsStatus201() throws Exception {
     mockMvc.perform(post("/v1/thread").with(csrf())
@@ -34,7 +39,8 @@ public class WebChatThreadControllerTest {
 
   @Test
   void getOfThreadEndpointReturnsStatus200() throws Exception {
-    mockMvc.perform(get("/v1/thread/1").with(csrf()))
+    ChatThread saved = repository.save(new ChatThread());
+    mockMvc.perform(get("/v1/thread/" + saved.getChatThreadId().chatThreadId()).with(csrf()))
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"));
   }
