@@ -2,20 +2,20 @@ package com.bjoggis.mono.openai.domain;
 
 import java.time.LocalDateTime;
 
-public class Message {
+public class ChatMessage {
 
-  private MessageId messageId;
+  private ChatMessageId chatMessageId;
   private Sender sender;
-  private byte[] message;
+  private String message;
   private LocalDateTime created;
   private ChatThreadId chatThreadId;
 
-  public MessageId getMessageId() {
-    return messageId;
+  public ChatMessageId getMessageId() {
+    return chatMessageId;
   }
 
-  public void setMessageId(MessageId messageId) {
-    this.messageId = messageId;
+  public void setMessageId(ChatMessageId chatMessageId) {
+    this.chatMessageId = chatMessageId;
   }
 
   public Sender getSender() {
@@ -26,11 +26,11 @@ public class Message {
     this.sender = sender;
   }
 
-  public byte[] getMessage() {
+  public String getMessage() {
     return message;
   }
 
-  public void setMessage(byte[] message) {
+  public void setMessage(String message) {
     this.message = message;
   }
 

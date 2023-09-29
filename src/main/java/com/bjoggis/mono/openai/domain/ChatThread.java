@@ -6,7 +6,7 @@ import java.util.List;
 public class ChatThread {
 
   private ChatThreadId chatThreadId;
-  private List<MessageId> messageIds = new ArrayList<>();
+  private List<ChatMessageId> chatMessageIds = new ArrayList<>();
   private AccountId accountId;
 
   public ChatThread() {
@@ -14,7 +14,7 @@ public class ChatThread {
 
   public ChatThread(ChatThreadState chatThreadState) {
     this.chatThreadId = chatThreadState.chatThreadId();
-    this.messageIds = chatThreadState.messageIds();
+    this.chatMessageIds = chatThreadState.chatMessageIds();
     this.accountId = chatThreadState.accountId();
   }
 
@@ -26,12 +26,12 @@ public class ChatThread {
     this.chatThreadId = chatThreadId;
   }
 
-  public List<MessageId> getMessageIds() {
-    return messageIds;
+  public List<ChatMessageId> getMessageIds() {
+    return chatMessageIds;
   }
 
-  public void setMessageIds(List<MessageId> messageIds) {
-    this.messageIds = messageIds;
+  public void setMessageIds(List<ChatMessageId> chatMessageIds) {
+    this.chatMessageIds = chatMessageIds;
   }
 
   public AccountId getAccountId() {
@@ -43,6 +43,6 @@ public class ChatThread {
   }
 
   public ChatThreadState memento() {
-    return new ChatThreadState(chatThreadId, messageIds, accountId);
+    return new ChatThreadState(chatThreadId, chatMessageIds, accountId);
   }
 }
