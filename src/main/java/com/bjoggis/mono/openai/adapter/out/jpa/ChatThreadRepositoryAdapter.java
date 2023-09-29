@@ -32,6 +32,13 @@ public class ChatThreadRepositoryAdapter implements ChatThreadRepository {
 
   @Override
   public void deleteById(ChatThreadId chatThreadId) {
-    repository.deleteById(chatThreadId.chatThreadId());
+    boolean exists = repository.existsById(chatThreadId.chatThreadId());
+
+    if (exists) {
+      repository.deleteById(chatThreadId.chatThreadId());
+      return;
+    }
+    throw new IllegalArgumentException("No such chat thread: " + chatThreadId);
+
   }
 }
