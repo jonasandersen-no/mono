@@ -6,7 +6,10 @@ import com.bjoggis.mono.openai.domain.ChatThread;
 import com.bjoggis.mono.openai.domain.ChatThreadId;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,4 +45,14 @@ public class ChatThreadController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
+  @DeleteMapping("/{threadId}")
+  public ResponseEntity<?> deleteThread(@PathVariable Long threadId) {
+    chatThreadService.deleteThreadById(ChatThreadId.of(threadId));
+    return ResponseEntity.ok().build();
+  }
+
+  @ExceptionHandler
+  ProblemDetail handleIllegalArgumentException(IllegalArgumentException e) {
+    return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.getMessage());
+  }
 }

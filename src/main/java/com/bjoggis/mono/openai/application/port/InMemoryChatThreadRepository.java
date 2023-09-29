@@ -17,7 +17,12 @@ public class InMemoryChatThreadRepository implements ChatThreadRepository {
 
   @Override
   public Optional<ChatThread> findById(ChatThreadId chatThreadId) {
-    return Optional.of(new ChatThread(idToMemberMap.get(chatThreadId)));
+    ChatThreadState state = idToMemberMap.get(chatThreadId);
+
+    if (state == null) {
+      return Optional.empty();
+    }
+    return Optional.of(new ChatThread(state));
   }
 
   @Override
@@ -32,5 +37,14 @@ public class InMemoryChatThreadRepository implements ChatThreadRepository {
 //    usernameToMemberMap.put(chatThreadState.username(), chatThreadState);
     idToMemberMap.put(chatThreadState.chatThreadId(), chatThreadState);
     return new ChatThread(chatThreadState);
+  }
+
+  @Override
+  public void deleteById(ChatThreadId chatThreadId) {
+    ChatThreadState removedState = idToMemberMap.remove(chatThreadId);
+
+    if (removedState == null) {
+      throw new IllegalArgumentException("No such chat thread: " + chatThreadId);
+    }
   }
 }

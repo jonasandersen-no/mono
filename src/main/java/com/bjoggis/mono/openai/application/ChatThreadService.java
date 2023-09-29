@@ -27,4 +27,7 @@ public class ChatThreadService {
     return chatThreadRepository.findById(chatThreadId);
   }
 
+  public void deleteThreadById(ChatThreadId chatThreadId) {
+    chatThreadRepository.deleteById(chatThreadId);
+  }
 }

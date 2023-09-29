@@ -9,4 +9,6 @@ public interface ChatThreadRepository {
   Optional<ChatThread> findById(ChatThreadId chatThreadId);
 
   ChatThread save(ChatThread thread);
+
+  void deleteById(ChatThreadId chatThreadId);
 }

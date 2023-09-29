@@ -13,7 +13,6 @@ class ChatThreadServiceTest {
 
   @Test
   void returnsNewChatThreadForAccountWhenCreateThreadIsCalled() {
-
     TestThreadServiceBuilder builder = new TestThreadServiceBuilder();
     ChatThreadRepository chatThreadRepository = builder.getChatThreadRepository();
     ChatThreadService chatThreadService = builder.build();
@@ -39,6 +38,20 @@ class ChatThreadServiceTest {
     Optional<ChatThread> foundChatThread = chatThreadService.findById(builder.getLastThreadId());
 
     assertEquals(builder.getLastThreadId(), foundChatThread.get().getChatThreadId());
+  }
 
+  @Test
+  void deletesChatThreadWhenChatThreadIsCalled() {
+    ChatThread chatThread = new ChatThread();
+
+    TestThreadServiceBuilder builder = new TestThreadServiceBuilder()
+        .save(chatThread);
+    ChatThreadService chatThreadService = builder.build();
+
+    chatThreadService.deleteThreadById(builder.getLastThreadId());
+
+    Optional<ChatThread> foundChatThread = chatThreadService.findById(builder.getLastThreadId());
+
+    assertEquals(Optional.empty(), foundChatThread);
   }
 }

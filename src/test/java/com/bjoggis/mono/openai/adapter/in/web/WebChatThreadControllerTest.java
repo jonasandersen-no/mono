@@ -1,9 +1,12 @@
 package com.bjoggis.mono.openai.adapter.in.web;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.bjoggis.mono.openai.application.port.ChatThreadRepository;
@@ -21,7 +24,6 @@ import org.springframework.test.web.servlet.MockMvc;
 @Import(TestWebThreadControllerConfiguration.class)
 @ActiveProfiles("test")
 public class WebChatThreadControllerTest {
-
 
   @Autowired
   MockMvc mockMvc;
@@ -43,5 +45,21 @@ public class WebChatThreadControllerTest {
     mockMvc.perform(get("/v1/thread/" + saved.getChatThreadId().chatThreadId()).with(csrf()))
         .andExpect(status().isOk())
         .andExpect(content().contentType("application/json"));
+  }
+
+  @Test
+  void deleteOfThreadEndpointReturnsStatus200() throws Exception {
+    ChatThread saved = repository.save(new ChatThread());
+    mockMvc.perform(delete("/v1/thread/" + saved.getChatThreadId().chatThreadId()))
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  void deleteOfThreadEndpointWhenThreadDoesntExistReturnsStatus400() throws Exception {
+    mockMvc.perform(delete("/v1/thread/9999"))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.title").value("Bad Request"))
+        .andExpect(jsonPath("$.detail").exists());
   }
 }

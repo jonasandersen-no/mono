@@ -29,4 +29,9 @@ public class ChatThreadRepositoryAdapter implements ChatThreadRepository {
 
     return saved.asChatThread();
   }
+
+  @Override
+  public void deleteById(ChatThreadId chatThreadId) {
+    repository.deleteById(chatThreadId.chatThreadId());
+  }
 }

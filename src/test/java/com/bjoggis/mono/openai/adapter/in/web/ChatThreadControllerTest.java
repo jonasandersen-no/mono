@@ -2,11 +2,14 @@ package com.bjoggis.mono.openai.adapter.in.web;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.bjoggis.mono.openai.application.ChatThreadService;
 import com.bjoggis.mono.openai.application.port.InMemoryChatThreadRepository;
 import com.bjoggis.mono.openai.domain.AccountId;
 import com.bjoggis.mono.openai.domain.ChatThread;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
@@ -46,5 +49,26 @@ public class ChatThreadControllerTest {
     assertNotNull(foundThread);
     assertEquals(1L, foundThread.accountId());
     assertEquals(saved.getChatThreadId().chatThreadId(), foundThread.chatThreadId());
+  }
+
+  @Test
+  void deletesThreadWhenDeletingThread() {
+    ChatThread chatThread = new ChatThread();
+    chatThread.setAccountId(AccountId.of(1L));
+
+    InMemoryChatThreadRepository threadRepository = new InMemoryChatThreadRepository();
+    ChatThread saved = threadRepository.save(chatThread);
+    ChatThreadService chatThreadService = new ChatThreadService(threadRepository);
+    ChatThreadController chatThreadController = new ChatThreadController(chatThreadService);
+
+    ResponseEntity<?> responseEntity = chatThreadController.deleteThread(
+        saved.getChatThreadId().chatThreadId());
+
+    Optional<ChatThread> notFound = threadRepository.findById(saved.getChatThreadId());
+
+    assertNotNull(notFound);
+    assertTrue(notFound.isEmpty());
+
+    assertNull(responseEntity.getBody());
   }
 }
