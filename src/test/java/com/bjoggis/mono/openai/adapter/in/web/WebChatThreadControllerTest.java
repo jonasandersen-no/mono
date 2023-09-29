@@ -14,11 +14,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest(controllers = ThreadController.class)
+@WebMvcTest(controllers = ChatThreadController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @Import(TestWebThreadControllerConfiguration.class)
 @ActiveProfiles("test")
-public class WebThreadControllerTest {
+public class WebChatThreadControllerTest {
 
 
   @Autowired

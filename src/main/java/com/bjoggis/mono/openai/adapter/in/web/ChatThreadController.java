@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1/thread")
-public class ThreadController {
+public class ChatThreadController {
 
   private final ChatThreadService chatThreadService;
 
-  public ThreadController(ChatThreadService chatThreadService) {
+  public ChatThreadController(ChatThreadService chatThreadService) {
     this.chatThreadService = chatThreadService;
   }
 
