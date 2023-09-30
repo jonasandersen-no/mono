@@ -4,6 +4,7 @@ import com.bjoggis.mono.openai.application.port.ChatThreadRepository;
 import com.bjoggis.mono.openai.domain.AccountId;
 import com.bjoggis.mono.openai.domain.ChatThread;
 import com.bjoggis.mono.openai.domain.ChatThreadId;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 
@@ -29,5 +30,12 @@ public class ChatThreadService {
 
   public void deleteThreadById(ChatThreadId chatThreadId) {
     chatThreadRepository.deleteById(chatThreadId);
+  }
+
+  public boolean validThread(ChatThreadId chatThreadId, AccountId accountId) {
+    ChatThread chatThread = chatThreadRepository.findById(chatThreadId)
+        .orElseThrow(() -> new EntityNotFoundException("Chat Thread not found"));
+
+    return chatThread.isOwner(accountId);
   }
 }

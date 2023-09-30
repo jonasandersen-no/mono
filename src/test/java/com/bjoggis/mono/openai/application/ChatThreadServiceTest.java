@@ -1,7 +1,9 @@
 package com.bjoggis.mono.openai.application;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.bjoggis.mono.openai.application.port.ChatThreadRepository;
 import com.bjoggis.mono.openai.domain.AccountId;
@@ -53,5 +55,34 @@ class ChatThreadServiceTest {
     Optional<ChatThread> foundChatThread = chatThreadService.findById(builder.getLastThreadId());
 
     assertEquals(Optional.empty(), foundChatThread);
+  }
+
+  @Test
+  void returnsTrueWhenAccountIdIsEqualToAccountIdInThread() {
+    ChatThread chatThread = new ChatThread();
+    chatThread.setAccountId(AccountId.of(1L));
+
+    TestThreadServiceBuilder builder = new TestThreadServiceBuilder()
+        .save(chatThread);
+
+    ChatThreadService service = builder.build();
+
+    boolean equal = service.validThread(builder.getLastThreadId(), AccountId.of(1L));
+
+    assertTrue(equal);
+  }
+
+  @Test
+  void returnsFalseWhenAccountIdIsNotEqualToAccountIdInThread() {
+    ChatThread chatThread = new ChatThread();
+    chatThread.setAccountId(AccountId.of(1L));
+
+    TestThreadServiceBuilder builder = new TestThreadServiceBuilder()
+        .save(chatThread);
+
+    ChatThreadService service = builder.build();
+
+    boolean equal = service.validThread(builder.getLastThreadId(), AccountId.of(2L));
+    assertFalse(equal);
   }
 }

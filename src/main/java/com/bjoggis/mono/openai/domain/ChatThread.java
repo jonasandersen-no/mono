@@ -45,4 +45,12 @@ public class ChatThread {
   public ChatThreadState memento() {
     return new ChatThreadState(chatThreadId, chatMessageIds, accountId);
   }
+
+  public boolean isOwner(AccountId accountId) {
+    if (this.accountId == null) {
+      return false;
+    }
+
+    return this.accountId.equals(accountId);
+  }
 }
