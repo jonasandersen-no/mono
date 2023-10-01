@@ -6,7 +6,7 @@ import java.util.List;
 public class ChatThread {
 
   private ChatThreadId chatThreadId;
-  private List<ChatMessageId> chatMessageIds = new ArrayList<>();
+  private List<String> messages = new ArrayList<>();
   private AccountId accountId;
 
   public ChatThread() {
@@ -14,7 +14,7 @@ public class ChatThread {
 
   public ChatThread(ChatThreadState chatThreadState) {
     this.chatThreadId = chatThreadState.chatThreadId();
-    this.chatMessageIds = chatThreadState.chatMessageIds();
+    this.messages = chatThreadState.messages();
     this.accountId = chatThreadState.accountId();
   }
 
@@ -26,12 +26,12 @@ public class ChatThread {
     this.chatThreadId = chatThreadId;
   }
 
-  public List<ChatMessageId> getMessageIds() {
-    return chatMessageIds;
+  public List<String> getMessages() {
+    return messages;
   }
 
-  public void setMessageIds(List<ChatMessageId> chatMessageIds) {
-    this.chatMessageIds = chatMessageIds;
+  public void setMessages(List<String> messages) {
+    this.messages = messages;
   }
 
   public AccountId getAccountId() {
@@ -43,7 +43,7 @@ public class ChatThread {
   }
 
   public ChatThreadState memento() {
-    return new ChatThreadState(chatThreadId, chatMessageIds, accountId);
+    return new ChatThreadState(chatThreadId, messages, accountId);
   }
 
   public boolean isOwner(AccountId accountId) {
