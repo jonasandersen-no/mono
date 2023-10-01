@@ -1,5 +1,6 @@
-package com.bjoggis.mono.openai.domain;
+package com.bjoggis.mono.openai.domain.wait;
 
+import com.bjoggis.mono.openai.domain.ChatThreadId;
 import java.time.LocalDateTime;
 
 public class ChatMessage {

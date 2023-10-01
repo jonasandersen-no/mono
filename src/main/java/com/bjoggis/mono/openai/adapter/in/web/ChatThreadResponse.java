@@ -1,7 +1,7 @@
 package com.bjoggis.mono.openai.adapter.in.web;
 
 import com.bjoggis.mono.openai.domain.ChatThread;
-import com.bjoggis.mono.openai.domain.ChatMessageId;
+import com.bjoggis.mono.openai.domain.wait.ChatMessageId;
 import java.util.List;
 
 record ChatThreadResponse(Long chatThreadId, List<Long> messageIds, Long accountId) {

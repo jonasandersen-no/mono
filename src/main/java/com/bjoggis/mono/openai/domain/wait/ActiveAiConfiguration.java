@@ -1,4 +1,4 @@
-package com.bjoggis.mono.openai.domain;
+package com.bjoggis.mono.openai.domain.wait;
 
 public class ActiveAiConfiguration {
 
