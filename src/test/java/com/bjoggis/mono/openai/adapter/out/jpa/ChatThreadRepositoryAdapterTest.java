@@ -65,4 +65,18 @@ class ChatThreadRepositoryAdapterTest {
   void throwsWhenTryingToDeleteChatThreadThatDoesntExist() {
     assertThrows(IllegalArgumentException.class, () -> adapter.deleteById(ChatThreadId.of(9999L)));
   }
+
+  @Test
+  void addMessageToChatThread() {
+    ChatThreadDbo chatThreadDbo = new ChatThreadDbo();
+    chatThreadDbo.setAccountId(1L);
+    ChatThreadDbo saved = repository.save(chatThreadDbo);
+
+    ChatThread chatThread = adapter.findById(ChatThreadId.of(saved.getId())).get();
+    chatThread.addMessage("Hello");
+    adapter.save(chatThread);
+
+    ChatThread foundChatThread = adapter.findById(ChatThreadId.of(saved.getId())).get();
+    assertEquals(1, foundChatThread.getMessages().size());
+  }
 }
