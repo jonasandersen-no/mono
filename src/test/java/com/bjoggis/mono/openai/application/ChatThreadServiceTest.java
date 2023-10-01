@@ -3,6 +3,7 @@ package com.bjoggis.mono.openai.application;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.bjoggis.mono.openai.application.port.ChatThreadRepository;
@@ -84,5 +85,38 @@ class ChatThreadServiceTest {
 
     boolean equal = service.validThread(builder.getLastThreadId(), AccountId.of(2L));
     assertFalse(equal);
+  }
+
+  @Test
+  void addMessageToChatThreadWhenSendingAsOwner() {
+    ChatThread chatThread = new ChatThread();
+    chatThread.setAccountId(AccountId.of(1L));
+
+    TestThreadServiceBuilder builder = new TestThreadServiceBuilder()
+        .save(chatThread);
+
+    ChatThreadService service = builder.build();
+
+    service.addMessage(builder.getLastThreadId(), AccountId.of(1L), "Hello");
+
+    ChatThread foundChatThread = builder.getChatThreadRepository()
+        .findById(builder.getLastThreadId()).get();
+
+    assertEquals(1, foundChatThread.getMessages().size());
+  }
+
+  @Test
+  void addMessageToChatThreadWhenNotSendingAsOwnerThrows() {
+    ChatThread chatThread = new ChatThread();
+    chatThread.setAccountId(AccountId.of(1L));
+
+    TestThreadServiceBuilder builder = new TestThreadServiceBuilder()
+        .save(chatThread);
+
+    ChatThreadService service = builder.build();
+
+    assertThrows(IllegalArgumentException.class, () -> {
+      service.addMessage(builder.getLastThreadId(), AccountId.of(2L), "Hello");
+    });
   }
 }

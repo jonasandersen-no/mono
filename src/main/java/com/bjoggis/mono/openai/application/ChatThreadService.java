@@ -38,4 +38,16 @@ public class ChatThreadService {
 
     return chatThread.isOwner(accountId);
   }
+
+  public void addMessage(ChatThreadId chatThreadId, AccountId accountId, String message) {
+    ChatThread chatThread = chatThreadRepository.findById(chatThreadId)
+        .orElseThrow(() -> new EntityNotFoundException("Chat Thread not found"));
+
+    if (!chatThread.isOwner(accountId)) {
+      throw new IllegalArgumentException("Account is not owner of chat thread");
+    }
+
+    chatThread.addMessage(message);
+    chatThreadRepository.save(chatThread);
+  }
 }
