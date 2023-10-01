@@ -1,12 +1,13 @@
 package com.bjoggis.mono.openai.domain;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ChatThread {
 
   private ChatThreadId chatThreadId;
-  private List<String> messages = new ArrayList<>();
+  private List<String> messages = new LinkedList<>();
   private AccountId accountId;
 
   public ChatThread() {
@@ -52,5 +53,9 @@ public class ChatThread {
     }
 
     return this.accountId.equals(accountId);
+  }
+
+  public void addMessage(String message) {
+    messages.add(message);
   }
 }

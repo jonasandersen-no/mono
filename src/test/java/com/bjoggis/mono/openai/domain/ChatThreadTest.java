@@ -1,5 +1,6 @@
 package com.bjoggis.mono.openai.domain;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -31,5 +32,13 @@ class ChatThreadTest {
 
     boolean equals = chatThread.isOwner(AccountId.of(1L));
     assertFalse(equals);
+  }
+
+  @Test
+  void addOneMessageToThreadWillSetTotalMessagesToOne() {
+    ChatThread chatThread = new ChatThread();
+    chatThread.addMessage("Hello");
+
+    assertEquals(1, chatThread.getMessages().size());
   }
 }
