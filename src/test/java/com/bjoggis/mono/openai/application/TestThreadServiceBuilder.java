@@ -2,18 +2,22 @@ package com.bjoggis.mono.openai.application;
 
 import com.bjoggis.mono.openai.application.port.ChatThreadRepository;
 import com.bjoggis.mono.openai.application.port.InMemoryChatThreadRepository;
+import com.bjoggis.mono.openai.application.port.InMemoryOpenAIAdapter;
+import com.bjoggis.mono.openai.application.port.OpenAIAdapter;
 import com.bjoggis.mono.openai.domain.ChatThread;
 import com.bjoggis.mono.openai.domain.ChatThreadId;
 
 public class TestThreadServiceBuilder {
 
   private final ChatThreadRepository chatThreadRepository;
+  private final OpenAIAdapter openAIAdapter;
 
   private ChatThread lastThread;
   private ChatThreadId lastThreadId;
 
   public TestThreadServiceBuilder() {
     chatThreadRepository = new InMemoryChatThreadRepository();
+    openAIAdapter = new InMemoryOpenAIAdapter();
   }
 
   public TestThreadServiceBuilder save(ChatThread thread) {
@@ -23,7 +27,7 @@ public class TestThreadServiceBuilder {
   }
 
   public ChatThreadService build() {
-    return new ChatThreadService(chatThreadRepository);
+    return new ChatThreadService(chatThreadRepository, openAIAdapter);
   }
 
   public ChatThreadRepository getChatThreadRepository() {

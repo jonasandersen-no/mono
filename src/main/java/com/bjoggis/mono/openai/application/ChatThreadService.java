@@ -1,6 +1,7 @@
 package com.bjoggis.mono.openai.application;
 
 import com.bjoggis.mono.openai.application.port.ChatThreadRepository;
+import com.bjoggis.mono.openai.application.port.OpenAIAdapter;
 import com.bjoggis.mono.openai.domain.AccountId;
 import com.bjoggis.mono.openai.domain.ChatThread;
 import com.bjoggis.mono.openai.domain.ChatThreadId;
@@ -12,9 +13,11 @@ import org.springframework.stereotype.Service;
 public class ChatThreadService {
 
   private final ChatThreadRepository chatThreadRepository;
+  private final OpenAIAdapter openAIAdapter;
 
-  public ChatThreadService(ChatThreadRepository chatThreadRepository) {
+  public ChatThreadService(ChatThreadRepository chatThreadRepository, OpenAIAdapter openAIAdapter) {
     this.chatThreadRepository = chatThreadRepository;
+    this.openAIAdapter = openAIAdapter;
   }
 
   public ChatThread createThread(AccountId accountId) {
@@ -49,5 +52,9 @@ public class ChatThreadService {
 
     chatThread.addMessage(message);
     chatThreadRepository.save(chatThread);
+  }
+
+  public String sendMessage(Long threadId, String message) {
+    return openAIAdapter.sendMessage(message);
   }
 }
