@@ -21,6 +21,6 @@ public class ChatSocketController {
 
     String response = chatThreadService.sendMessage(message.threadId(), message.message());
 
-    webSocketSender.send(message.threadId(), response);
+//    webSocketSender.send(message.threadId(), response);
   }
 }
