@@ -1,5 +1,7 @@
-package com.bjoggis.mono.openai.adapter.in.websocket;
+package com.bjoggis.mono.openai.adapter.out.openai;
 
+import com.bjoggis.mono.openai.adapter.in.websocket.ChatMessageResponse;
+import com.bjoggis.mono.openai.application.port.WebSocketSender;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 

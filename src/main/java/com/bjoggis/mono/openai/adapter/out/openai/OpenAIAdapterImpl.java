@@ -1,6 +1,6 @@
 package com.bjoggis.mono.openai.adapter.out.openai;
 
-import com.bjoggis.mono.openai.adapter.in.websocket.WebSocketSender;
+import com.bjoggis.mono.openai.application.port.WebSocketSender;
 import com.bjoggis.mono.openai.application.port.OpenAIAdapter;
 import com.theokanning.openai.completion.chat.ChatCompletionChunk;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;

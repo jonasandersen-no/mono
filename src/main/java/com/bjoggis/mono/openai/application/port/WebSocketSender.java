@@ -1,4 +1,4 @@
-package com.bjoggis.mono.openai.adapter.in.websocket;
+package com.bjoggis.mono.openai.application.port;
 
 public interface WebSocketSender {
 
