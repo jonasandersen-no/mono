@@ -7,20 +7,14 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class ChatSocketController {
 
-  private final WebSocketSender webSocketSender;
   private final ChatThreadService chatThreadService;
 
-  public ChatSocketController(WebSocketSender webSocketSender,
-      ChatThreadService chatThreadService) {
-    this.webSocketSender = webSocketSender;
+  public ChatSocketController(ChatThreadService chatThreadService) {
     this.chatThreadService = chatThreadService;
   }
 
   @MessageMapping("/hello")
   public void message(ChatMessageRequest message) {
-
-    String response = chatThreadService.sendMessage(message.threadId(), message.message());
-
-//    webSocketSender.send(message.threadId(), response);
+    chatThreadService.sendMessage(message.threadId(), message.message());
   }
 }
