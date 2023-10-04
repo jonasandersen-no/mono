@@ -17,7 +17,7 @@ public class SecurityConfiguration {
     http.authorizeHttpRequests(authorize ->
             authorize.requestMatchers("/actuator/**").permitAll()
                 .requestMatchers("/v1/**").authenticated()
-                .requestMatchers("/ws/**").permitAll())
+                .requestMatchers("/ws/**").authenticated())
         .oauth2ResourceServer(oauth2 -> {
           oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(new JwtAuthenticationConverter()));
         }).csrf(csrf -> csrf.disable());
