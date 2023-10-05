@@ -1,7 +1,7 @@
 package com.bjoggis.mono.openai.adapter.out.openai;
 
-import com.bjoggis.mono.openai.application.port.WebSocketSender;
 import com.bjoggis.mono.openai.application.port.OpenAIAdapter;
+import com.bjoggis.mono.openai.application.port.WebSocketSender;
 import com.theokanning.openai.completion.chat.ChatCompletionChunk;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
 import com.theokanning.openai.completion.chat.ChatMessage;
@@ -18,16 +18,19 @@ public class OpenAIAdapterImpl implements OpenAIAdapter {
 
   private final OpenaiProperties properties;
   private final WebSocketSender webSocketSender;
+  private final HasherFunction hasherFunction;
 
   private final String userId = UUID.randomUUID().toString();
 
-  public OpenAIAdapterImpl(OpenaiProperties properties, WebSocketSender webSocketSender) {
+  public OpenAIAdapterImpl(OpenaiProperties properties, WebSocketSender webSocketSender,
+      HasherFunction hasherFunction) {
     this.properties = properties;
     this.webSocketSender = webSocketSender;
+    this.hasherFunction = hasherFunction;
   }
 
   @Override
-  public String sendMessage(String message) {
+  public String sendMessage(String message, String username) {
     OpenAiService service = new OpenAiService(properties.token(), Duration.ofMinutes(1));
 
     ChatCompletionRequest request = ChatCompletionRequest.builder()
@@ -36,7 +39,7 @@ public class OpenAIAdapterImpl implements OpenAIAdapter {
         .n(1)
         .maxTokens(500)
         .temperature(1.2)
-        .user(userId)
+        .user(hasherFunction.apply(username))
         .build();
 
     Flowable<ChatCompletionChunk> flowable = service.streamChatCompletion(
@@ -56,7 +59,7 @@ public class OpenAIAdapterImpl implements OpenAIAdapter {
               System.out.print("Response: ");
             }
             if (accumulator.getMessageChunk().getContent() != null) {
-              webSocketSender.send(1L, accumulator.getMessageChunk().getContent());
+              webSocketSender.send(1L, accumulator.getMessageChunk().getContent(), username);
               System.out.print(accumulator.getMessageChunk().getContent());
             }
           }

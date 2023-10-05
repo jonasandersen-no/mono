@@ -10,7 +10,7 @@ import com.bjoggis.mono.openai.domain.ChatThreadId;
 public class TestThreadServiceBuilder {
 
   private final ChatThreadRepository chatThreadRepository;
-  private final OpenAIAdapter openAIAdapter;
+  private final InMemoryOpenAIAdapter openAIAdapter;
 
   private ChatThread lastThread;
   private ChatThreadId lastThreadId;
@@ -48,5 +48,9 @@ public class TestThreadServiceBuilder {
 
   public void setLastThreadId(ChatThreadId lastThreadId) {
     this.lastThreadId = lastThreadId;
+  }
+
+  public InMemoryOpenAIAdapter getInMemoryOpenAIAdapter() {
+    return openAIAdapter;
   }
 }

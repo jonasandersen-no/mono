@@ -16,9 +16,9 @@ class WebSocketSenderImplTest {
 
     WebSocketSender webSocketSender = new WebSocketSenderImpl(simpMessagingTemplate);
 
-    webSocketSender.send(1L, "message");
+    webSocketSender.send(1L, "message", "user1");
 
-    verify(simpMessagingTemplate).convertAndSendToUser("Bjoggis", "/queue/response",
+    verify(simpMessagingTemplate).convertAndSendToUser("user1", "/queue/response",
         new ChatMessageResponse(1L, "message"));
 
   }

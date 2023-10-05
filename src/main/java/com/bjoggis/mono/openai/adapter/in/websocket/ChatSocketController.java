@@ -1,6 +1,7 @@
 package com.bjoggis.mono.openai.adapter.in.websocket;
 
 import com.bjoggis.mono.openai.application.ChatThreadService;
+import java.security.Principal;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
@@ -14,7 +15,8 @@ public class ChatSocketController {
   }
 
   @MessageMapping("/hello")
-  public void message(ChatMessageRequest message) {
-    chatThreadService.sendMessage(message.threadId(), message.message());
+  public void message(ChatMessageRequest message, Principal principal) {
+    System.out.println("Principal: " + principal.getName());
+    chatThreadService.sendMessage(message.threadId(), message.message(), principal.getName());
   }
 }

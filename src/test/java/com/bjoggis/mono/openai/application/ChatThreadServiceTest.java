@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.bjoggis.mono.openai.application.port.ChatThreadRepository;
+import com.bjoggis.mono.openai.application.port.InMemoryOpenAIAdapter;
+import com.bjoggis.mono.openai.application.port.OpenAIAdapter;
 import com.bjoggis.mono.openai.domain.AccountId;
 import com.bjoggis.mono.openai.domain.ChatThread;
 import java.util.Optional;
@@ -118,5 +120,17 @@ class ChatThreadServiceTest {
     assertThrows(IllegalArgumentException.class, () -> {
       service.addMessage(builder.getLastThreadId(), AccountId.of(2L), "Hello");
     });
+  }
+
+  @Test
+  void sendMessageReturnsResponseFromOpenAIAdapter() {
+    TestThreadServiceBuilder builder = new TestThreadServiceBuilder();
+    ChatThreadService chatThreadService = builder.build();
+    InMemoryOpenAIAdapter openAIAdapter =  builder.getInMemoryOpenAIAdapter();
+
+    String response = chatThreadService.sendMessage(1L, "Hello", "user1");
+
+    assertEquals("user1", openAIAdapter.getLastUsername());
+    assertEquals("olleH", response);
   }
 }
