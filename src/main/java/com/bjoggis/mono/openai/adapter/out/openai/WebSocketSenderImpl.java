@@ -16,6 +16,7 @@ public class WebSocketSenderImpl implements WebSocketSender {
 
   @Override
   public void send(Long threadId, String message) {
-    simpMessagingTemplate.convertAndSend("/topic/chat", new ChatMessageResponse(threadId, message));
+    simpMessagingTemplate.convertAndSendToUser("Bjoggis", "/queue/response",
+        new ChatMessageResponse(threadId, message));
   }
 }

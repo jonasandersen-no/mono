@@ -18,7 +18,7 @@ class WebSocketSenderImplTest {
 
     webSocketSender.send(1L, "message");
 
-    verify(simpMessagingTemplate).convertAndSend("/topic/chat",
+    verify(simpMessagingTemplate).convertAndSendToUser("Bjoggis", "/queue/response",
         new ChatMessageResponse(1L, "message"));
 
   }
