@@ -27,7 +27,5 @@ class ChatSocketControllerTest {
     ChatThread thread = repository.findById(lastThreadId).get();
 
     assertEquals(1, thread.getMessages().size());
-
-//    repository
   }
 }
