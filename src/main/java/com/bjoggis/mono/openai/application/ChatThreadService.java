@@ -54,7 +54,7 @@ public class ChatThreadService {
     chatThreadRepository.save(chatThread);
   }
 
-  public String sendMessage(Long threadId, String message, String username) {
+  public String sendMessage(String message, String username) {
     return openAIAdapter.sendMessage(message, username);
   }
 }

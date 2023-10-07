@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.bjoggis.mono.openai.application.port.ChatThreadRepository;
 import com.bjoggis.mono.openai.application.port.InMemoryOpenAIAdapter;
-import com.bjoggis.mono.openai.application.port.OpenAIAdapter;
 import com.bjoggis.mono.openai.domain.AccountId;
 import com.bjoggis.mono.openai.domain.ChatThread;
 import java.util.Optional;
@@ -128,7 +127,7 @@ class ChatThreadServiceTest {
     ChatThreadService chatThreadService = builder.build();
     InMemoryOpenAIAdapter openAIAdapter =  builder.getInMemoryOpenAIAdapter();
 
-    String response = chatThreadService.sendMessage(1L, "Hello", "user1");
+    String response = chatThreadService.sendMessage("Hello", "user1");
 
     assertEquals("user1", openAIAdapter.getLastUsername());
     assertEquals("olleH", response);

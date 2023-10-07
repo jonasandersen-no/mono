@@ -1,6 +1,8 @@
 package com.bjoggis.mono.openai.adapter.in.websocket;
 
 import com.bjoggis.mono.openai.application.ChatThreadService;
+import com.bjoggis.mono.openai.domain.AccountId;
+import com.bjoggis.mono.openai.domain.ChatThreadId;
 import java.security.Principal;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
@@ -15,8 +17,16 @@ public class ChatSocketController {
   }
 
   @MessageMapping("/hello")
-  public void message(ChatMessageRequest message, Principal principal) {
-    System.out.println("Principal: " + principal.getName());
-    chatThreadService.sendMessage(message.threadId(), message.message(), principal.getName());
+  public void message(ChatMessageRequest request, Principal principal) {
+    boolean validThread = chatThreadService.validThread(ChatThreadId.of(request.threadId()),
+        AccountId.of(1L));
+
+    if (!validThread) {
+      throw new IllegalArgumentException("Account is not owner of chat thread");
+    }
+
+    String response = chatThreadService.sendMessage(request.message(), principal.getName());
+
+    chatThreadService.addMessage(ChatThreadId.of(request.threadId()), AccountId.of(1L), response);
   }
 }
