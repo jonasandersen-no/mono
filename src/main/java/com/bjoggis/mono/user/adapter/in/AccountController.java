@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/v1/account")
 @RestController
-class AccountController {
+public class AccountController {
 
   private final AccountService service;
 
@@ -31,6 +31,12 @@ class AccountController {
   @GetMapping("/{id}")
   AccountResource getAccount(@PathVariable Long id) {
     Account account = service.findAccountById(AccountId.of(id));
+    return AccountResource.from(account);
+  }
+
+  @GetMapping("/username/{username}")
+  AccountResource findAccountByUsername(@PathVariable String username) {
+    Account account = service.findAccountByUsername(username);
     return AccountResource.from(account);
   }
 

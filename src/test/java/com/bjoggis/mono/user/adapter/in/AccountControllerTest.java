@@ -48,4 +48,18 @@ class AccountControllerTest {
     assertNotNull(test.id());
     assertEquals("username", test.username());
   }
+
+  @Test
+  void testGetAccountByUsername() {
+    Account account = new AccountBuilder().withDefaults().build();
+    TestAccountServiceBuilder builder = new TestAccountServiceBuilder().saveAccount(account);
+    AccountService service = builder.build();
+    AccountController controller = new AccountController(service);
+
+    AccountId lastAccountId = builder.getLastAccountId();
+    AccountResource test = controller.findAccountByUsername(account.getUsername());
+
+    assertEquals(lastAccountId.id(), test.id());
+    assertEquals("username", test.username());
+  }
 }
