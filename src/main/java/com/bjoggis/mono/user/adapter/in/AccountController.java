@@ -35,7 +35,7 @@ public class AccountController {
   }
 
   @GetMapping("/username/{username}")
-  AccountResource findAccountByUsername(@PathVariable String username) {
+  public AccountResource findAccountByUsername(@PathVariable String username) {
     Account account = service.findAccountByUsername(username);
     return AccountResource.from(account);
   }

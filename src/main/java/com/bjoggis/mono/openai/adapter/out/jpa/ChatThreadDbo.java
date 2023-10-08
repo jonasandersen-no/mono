@@ -27,7 +27,7 @@ public class ChatThreadDbo {
   private Long accountId;
 
   @ElementCollection
-  @CollectionTable(name = "chat_thread_messages", joinColumns = @JoinColumn(name = "chat_thread_message_id"))
+  @CollectionTable(name = "chat_thread_messages", joinColumns = @JoinColumn(name = "chat_thread_message_id"), catalog = "main")
   @Column(name = "message", nullable = false)
   private List<String> messages = new LinkedList<>();
 
