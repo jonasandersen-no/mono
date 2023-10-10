@@ -125,11 +125,28 @@ class ChatThreadServiceTest {
   void sendMessageReturnsResponseFromOpenAIAdapter() {
     TestThreadServiceBuilder builder = new TestThreadServiceBuilder();
     ChatThreadService chatThreadService = builder.build();
-    InMemoryOpenAIAdapter openAIAdapter =  builder.getInMemoryOpenAIAdapter();
+    InMemoryOpenAIAdapter openAIAdapter = builder.getInMemoryOpenAIAdapter();
 
     String response = chatThreadService.sendMessage("Hello", "user1");
 
     assertEquals("user1", openAIAdapter.getLastUsername());
     assertEquals("olleH", response);
+  }
+
+  @Test
+  void findAllThreadsOwnedByAccountId() {
+    ChatThread chatThread = new ChatThread();
+    chatThread.setAccountId(AccountId.of(1L));
+
+    TestThreadServiceBuilder builder = new TestThreadServiceBuilder()
+        .save(chatThread);
+
+    ChatThreadService service = builder.build();
+
+    ChatThread chatThread2 = new ChatThread();
+    chatThread2.setAccountId(AccountId.of(2L));
+
+    assertEquals(1, service.findAllThreads(AccountId.of(1L)).size());
+    assertEquals(0, service.findAllThreads(AccountId.of(2L)).size());
   }
 }

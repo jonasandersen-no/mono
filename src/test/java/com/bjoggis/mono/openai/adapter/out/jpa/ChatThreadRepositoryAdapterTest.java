@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.bjoggis.mono.openai.domain.AccountId;
 import com.bjoggis.mono.openai.domain.ChatThread;
 import com.bjoggis.mono.openai.domain.ChatThreadId;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,5 +79,24 @@ class ChatThreadRepositoryAdapterTest {
 
     ChatThread foundChatThread = adapter.findById(ChatThreadId.of(saved.getId())).get();
     assertEquals(1, foundChatThread.getMessages().size());
+  }
+
+  @Test
+  void findAllThreadsByAccountId() {
+    ChatThreadDbo chatThreadDbo = new ChatThreadDbo();
+    chatThreadDbo.setAccountId(1L);
+    repository.save(chatThreadDbo);
+
+    ChatThreadDbo chatThreadDbo2 = new ChatThreadDbo();
+    chatThreadDbo2.setAccountId(1L);
+    repository.save(chatThreadDbo2);
+
+    ChatThreadDbo chatThreadDbo3 = new ChatThreadDbo();
+    chatThreadDbo3.setAccountId(2L);
+    repository.save(chatThreadDbo3);
+
+    List<ChatThread> allByAccountId = adapter.findAllByAccountId(AccountId.of(1L));
+
+    assertEquals(2, allByAccountId.size());
   }
 }

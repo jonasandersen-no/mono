@@ -7,6 +7,7 @@ import com.bjoggis.mono.openai.domain.ChatThread;
 import com.bjoggis.mono.openai.domain.ChatThreadId;
 import jakarta.persistence.EntityNotFoundException;
 import java.security.Principal;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +43,7 @@ public class ChatThreadController {
   }
 
   @GetMapping("/{threadId}")
-  ResponseEntity<ChatThreadResponse> FindThread(@PathVariable Long threadId) {
+  ResponseEntity<ChatThreadResponse> findThread(@PathVariable Long threadId) {
     ChatThreadResponse response = chatThreadService.findById(ChatThreadId.of(threadId))
         .map(ChatThreadResponse::fromChatThread)
         .orElseThrow(EntityNotFoundException::new);
@@ -50,8 +51,29 @@ public class ChatThreadController {
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
+  @GetMapping
+  ResponseEntity<List<ChatThreadResponse>> findAllThreadsByPrincipal(Principal principal) {
+    Account account = AIAccountService.findAccountByUsername(principal.getName())
+        .orElseThrow(() -> new IllegalArgumentException("Account not found"));
+
+    List<ChatThreadResponse> response = chatThreadService.findAllThreads(account.getId()).stream()
+        .map(ChatThreadResponse::fromChatThread)
+        .toList();
+
+    return new ResponseEntity<>(response, HttpStatus.OK);
+  }
+
   @DeleteMapping("/{threadId}")
-  public ResponseEntity<?> deleteThread(@PathVariable Long threadId) {
+  public ResponseEntity<?> deleteThread(@PathVariable Long threadId, Principal principal) {
+    Account account = AIAccountService.findAccountByUsername(principal.getName())
+        .orElseThrow(() -> new IllegalArgumentException("Account not found"));
+
+    try {
+      chatThreadService.validThread(ChatThreadId.of(threadId), account.getId());
+    } catch (EntityNotFoundException e) {
+      throw new IllegalArgumentException("No such chat thread: " + threadId);
+    }
+
     chatThreadService.deleteThreadById(ChatThreadId.of(threadId));
     return ResponseEntity.ok().build();
   }

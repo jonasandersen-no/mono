@@ -19,6 +19,10 @@ public class ChatThread {
     this.accountId = chatThreadState.accountId();
   }
 
+  public ChatThread(AccountId accountId) {
+    this.accountId = accountId;
+  }
+
   public ChatThreadId getChatThreadId() {
     return chatThreadId;
   }

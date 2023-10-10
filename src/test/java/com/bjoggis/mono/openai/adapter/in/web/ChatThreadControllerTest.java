@@ -12,6 +12,7 @@ import com.bjoggis.mono.openai.application.port.DummyAccountAdapter;
 import com.bjoggis.mono.openai.domain.AccountId;
 import com.bjoggis.mono.openai.domain.ChatThread;
 import com.bjoggis.mono.user.adapter.in.TestPrincipal;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
@@ -44,7 +45,6 @@ public class ChatThreadControllerTest {
     TestThreadServiceBuilder builder = new TestThreadServiceBuilder();
     AIAccountService aiAccountService = new AIAccountService(new DummyAccountAdapter());
 
-
     builder.save(chatThread);
 
     ChatThread saved = builder.getLastThread();
@@ -52,7 +52,7 @@ public class ChatThreadControllerTest {
     ChatThreadController chatThreadController = new ChatThreadController(builder.build(),
         aiAccountService);
 
-    ResponseEntity<ChatThreadResponse> findThreadResponse = chatThreadController.FindThread(
+    ResponseEntity<ChatThreadResponse> findThreadResponse = chatThreadController.findThread(
         saved.getChatThreadId().chatThreadId());
 
     ChatThreadResponse foundThread = findThreadResponse.getBody();
@@ -76,7 +76,7 @@ public class ChatThreadControllerTest {
         aiAccountService);
 
     ResponseEntity<?> responseEntity = chatThreadController.deleteThread(
-        saved.getChatThreadId().chatThreadId());
+        saved.getChatThreadId().chatThreadId(), new TestPrincipal("test"));
 
     Optional<ChatThread> notFound = threadRepository.findById(saved.getChatThreadId());
 
@@ -84,5 +84,28 @@ public class ChatThreadControllerTest {
     assertTrue(notFound.isEmpty());
 
     assertNull(responseEntity.getBody());
+  }
+
+  @Test
+  void findAllByPrincipalReturnsTwoThreads() {
+    ChatThread chatThread = new ChatThread();
+    chatThread.setAccountId(AccountId.of(1L));
+    ChatThread chatThread2 = new ChatThread();
+    chatThread2.setAccountId(AccountId.of(1L));
+
+    TestThreadServiceBuilder builder = new TestThreadServiceBuilder();
+    builder.save(chatThread);
+    builder.save(chatThread2);
+    AIAccountService aiAccountService = new AIAccountService(new DummyAccountAdapter());
+    ChatThreadController chatThreadController = new ChatThreadController(builder.build(),
+        aiAccountService);
+
+    ResponseEntity<List<ChatThreadResponse>> responseEntity = chatThreadController.findAllThreadsByPrincipal(
+        new TestPrincipal("test"));
+
+    List<ChatThreadResponse> chatThreads = responseEntity.getBody();
+
+    assertNotNull(chatThreads);
+    assertEquals(2, chatThreads.size());
   }
 }

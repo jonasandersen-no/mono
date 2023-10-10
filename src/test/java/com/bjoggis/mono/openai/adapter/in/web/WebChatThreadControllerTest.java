@@ -9,7 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.bjoggis.mono.openai.application.AIAccountService;
 import com.bjoggis.mono.openai.application.port.ChatThreadRepository;
+import com.bjoggis.mono.openai.domain.AccountId;
 import com.bjoggis.mono.openai.domain.ChatThread;
 import com.bjoggis.mono.user.adapter.in.TestPrincipal;
 import org.junit.jupiter.api.Test;
@@ -17,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -32,6 +33,9 @@ public class WebChatThreadControllerTest {
 
   @Autowired
   ChatThreadRepository repository;
+
+  @Autowired
+  AIAccountService aiAccountService;
 
   @Test
   void postOfThreadEndpointReturnsStatus201() throws Exception {
@@ -51,14 +55,16 @@ public class WebChatThreadControllerTest {
 
   @Test
   void deleteOfThreadEndpointReturnsStatus200() throws Exception {
-    ChatThread saved = repository.save(new ChatThread());
-    mockMvc.perform(delete("/v1/thread/" + saved.getChatThreadId().chatThreadId()))
+    ChatThread saved = repository.save(new ChatThread(AccountId.of(1L)));
+    mockMvc.perform(delete("/v1/thread/" + saved.getChatThreadId().chatThreadId())
+            .principal(new TestPrincipal("test")))
         .andExpect(status().isOk());
   }
 
   @Test
   void deleteOfThreadEndpointWhenThreadDoesntExistReturnsStatus400() throws Exception {
-    mockMvc.perform(delete("/v1/thread/9999"))
+    mockMvc.perform(delete("/v1/thread/9999")
+            .principal(new TestPrincipal("test")))
         .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.title").value("Bad Request"))

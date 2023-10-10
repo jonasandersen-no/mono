@@ -1,8 +1,10 @@
 package com.bjoggis.mono.openai.adapter.out.jpa;
 
 import com.bjoggis.mono.openai.application.port.ChatThreadRepository;
+import com.bjoggis.mono.openai.domain.AccountId;
 import com.bjoggis.mono.openai.domain.ChatThread;
 import com.bjoggis.mono.openai.domain.ChatThreadId;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +21,13 @@ public class ChatThreadRepositoryAdapter implements ChatThreadRepository {
   public Optional<ChatThread> findById(ChatThreadId chatThreadId) {
     return repository.findById(chatThreadId.chatThreadId())
         .map(ChatThreadDbo::asChatThread);
+  }
+
+  @Override
+  public List<ChatThread> findAllByAccountId(AccountId accountId) {
+    return repository.findByAccountId(accountId.id()).stream()
+        .map(ChatThreadDbo::asChatThread)
+        .toList();
   }
 
   @Override
