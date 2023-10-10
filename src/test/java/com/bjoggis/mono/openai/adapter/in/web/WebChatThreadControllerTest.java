@@ -11,11 +11,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.bjoggis.mono.openai.application.port.ChatThreadRepository;
 import com.bjoggis.mono.openai.domain.ChatThread;
+import com.bjoggis.mono.user.adapter.in.TestPrincipal;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -33,9 +35,9 @@ public class WebChatThreadControllerTest {
 
   @Test
   void postOfThreadEndpointReturnsStatus201() throws Exception {
-    mockMvc.perform(post("/v1/thread").with(csrf())
-            .contentType("application/json")
-            .content("{\"accountId\": 1}"))
+    mockMvc.perform(post("/v1/thread")
+            .principal(new TestPrincipal("test"))
+            .with(csrf()))
         .andExpect(status().isCreated());
   }
 

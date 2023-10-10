@@ -1,7 +1,9 @@
 package com.bjoggis.mono.openai.adapter.in.web;
 
+import com.bjoggis.mono.openai.application.AIAccountService;
 import com.bjoggis.mono.openai.application.ChatThreadService;
 import com.bjoggis.mono.openai.application.port.ChatThreadRepository;
+import com.bjoggis.mono.openai.application.port.DummyAccountAdapter;
 import com.bjoggis.mono.openai.application.port.InMemoryChatThreadRepository;
 import com.bjoggis.mono.openai.application.port.InMemoryOpenAIAdapter;
 import com.bjoggis.mono.openai.application.port.OpenAIAdapter;
@@ -24,5 +26,15 @@ public class TestWebThreadControllerConfiguration {
   @Bean
   ChatThreadService threadService() {
     return new ChatThreadService(chatThreadRepository(), openAIAdapter());
+  }
+
+  @Bean
+  AIAccountService aiAccountService() {
+    return new AIAccountService(dummyAccountAdapter());
+  }
+
+  @Bean
+  DummyAccountAdapter dummyAccountAdapter() {
+    return new DummyAccountAdapter();
   }
 }

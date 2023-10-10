@@ -5,10 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.bjoggis.mono.openai.application.AIAccountService;
 import com.bjoggis.mono.openai.application.TestThreadServiceBuilder;
 import com.bjoggis.mono.openai.application.port.ChatThreadRepository;
+import com.bjoggis.mono.openai.application.port.DummyAccountAdapter;
 import com.bjoggis.mono.openai.domain.AccountId;
 import com.bjoggis.mono.openai.domain.ChatThread;
+import com.bjoggis.mono.user.adapter.in.TestPrincipal;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
@@ -19,9 +22,12 @@ public class ChatThreadControllerTest {
   void returnsThreadResponseWhenCreatingThread() {
     TestThreadServiceBuilder builder = new TestThreadServiceBuilder();
 
-    ChatThreadController chatThreadController = new ChatThreadController(builder.build());
+    AIAccountService aiAccountService = new AIAccountService(new DummyAccountAdapter());
+
+    ChatThreadController chatThreadController = new ChatThreadController(builder.build(),
+        aiAccountService);
     ResponseEntity<ChatThreadResponse> response = chatThreadController.createThread(
-        new CreateThreadRequest(1L));
+        new TestPrincipal("test"));
 
     ChatThreadResponse thread = response.getBody();
 
@@ -36,12 +42,15 @@ public class ChatThreadControllerTest {
     chatThread.setAccountId(AccountId.of(1L));
 
     TestThreadServiceBuilder builder = new TestThreadServiceBuilder();
+    AIAccountService aiAccountService = new AIAccountService(new DummyAccountAdapter());
+
 
     builder.save(chatThread);
 
     ChatThread saved = builder.getLastThread();
 
-    ChatThreadController chatThreadController = new ChatThreadController(builder.build());
+    ChatThreadController chatThreadController = new ChatThreadController(builder.build(),
+        aiAccountService);
 
     ResponseEntity<ChatThreadResponse> findThreadResponse = chatThreadController.FindThread(
         saved.getChatThreadId().chatThreadId());
@@ -62,7 +71,9 @@ public class ChatThreadControllerTest {
     builder.save(chatThread);
     ChatThreadRepository threadRepository = builder.getChatThreadRepository();
     ChatThread saved = builder.getLastThread();
-    ChatThreadController chatThreadController = new ChatThreadController(builder.build());
+    AIAccountService aiAccountService = new AIAccountService(new DummyAccountAdapter());
+    ChatThreadController chatThreadController = new ChatThreadController(builder.build(),
+        aiAccountService);
 
     ResponseEntity<?> responseEntity = chatThreadController.deleteThread(
         saved.getChatThreadId().chatThreadId());
