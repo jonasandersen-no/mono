@@ -16,7 +16,8 @@ public class ChatSocketController {
   private final ChatThreadService chatThreadService;
   private final AIAccountService AIAccountService;
 
-  public ChatSocketController(ChatThreadService chatThreadService, AIAccountService AIAccountService) {
+  public ChatSocketController(ChatThreadService chatThreadService,
+      AIAccountService AIAccountService) {
     this.chatThreadService = chatThreadService;
     this.AIAccountService = AIAccountService;
   }
@@ -33,6 +34,9 @@ public class ChatSocketController {
     if (!validThread) {
       throw new IllegalArgumentException("Account is not owner of chat thread");
     }
+
+    chatThreadService.addMessage(ChatThreadId.of(request.threadId()), AccountId.of(1L),
+        request.message());
 
     String response = chatThreadService.sendMessage(request.message(), account.getUsername());
 

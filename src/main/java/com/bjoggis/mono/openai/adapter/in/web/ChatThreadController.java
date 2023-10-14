@@ -8,6 +8,8 @@ import com.bjoggis.mono.openai.domain.ChatThreadId;
 import jakarta.persistence.EntityNotFoundException;
 import java.security.Principal;
 import java.util.List;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +35,8 @@ public class ChatThreadController {
   }
 
   @PostMapping
-  ResponseEntity<ChatThreadResponse> createThread(Principal principal) {
+  @CacheEvict(value = "threads", key = "#principal.name")
+  public ResponseEntity<ChatThreadResponse> createThread(Principal principal) {
     Account account = AIAccountService.findAccountByUsername(principal.getName())
         .orElseThrow(() -> new IllegalArgumentException("Account not found"));
 
@@ -52,18 +55,20 @@ public class ChatThreadController {
   }
 
   @GetMapping
-  ResponseEntity<List<ChatThreadResponse>> findAllThreadsByPrincipal(Principal principal) {
+  @Cacheable(value = "threads", key = "#principal.name")
+  public ResponseEntity<List<ChatThreadResponse>> findAllThreadsByPrincipal(Principal principal) {
     Account account = AIAccountService.findAccountByUsername(principal.getName())
         .orElseThrow(() -> new IllegalArgumentException("Account not found"));
 
     List<ChatThreadResponse> response = chatThreadService.findAllThreads(account.getId()).stream()
-        .map(ChatThreadResponse::fromChatThread)
+        .map(ChatThreadResponse::fromChatThreadNoMessages)
         .toList();
 
     return new ResponseEntity<>(response, HttpStatus.OK);
   }
 
   @DeleteMapping("/{threadId}")
+  @CacheEvict(value = "threads", key = "#principal.name")
   public ResponseEntity<?> deleteThread(@PathVariable Long threadId, Principal principal) {
     Account account = AIAccountService.findAccountByUsername(principal.getName())
         .orElseThrow(() -> new IllegalArgumentException("Account not found"));
