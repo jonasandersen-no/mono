@@ -3,6 +3,7 @@ package com.bjoggis.mono.openai.application;
 import com.bjoggis.mono.openai.application.port.ChatThreadRepository;
 import com.bjoggis.mono.openai.application.port.OpenAIAdapter;
 import com.bjoggis.mono.openai.domain.AccountId;
+import com.bjoggis.mono.openai.domain.ChatMessage;
 import com.bjoggis.mono.openai.domain.ChatThread;
 import com.bjoggis.mono.openai.domain.ChatThreadId;
 import jakarta.persistence.EntityNotFoundException;
@@ -47,7 +48,7 @@ public class ChatThreadService {
     return chatThread.isOwner(accountId);
   }
 
-  public void addMessage(ChatThreadId chatThreadId, AccountId accountId, String message) {
+  public void addMessage(ChatThreadId chatThreadId, AccountId accountId, ChatMessage message) {
     ChatThread chatThread = chatThreadRepository.findById(chatThreadId)
         .orElseThrow(() -> new EntityNotFoundException("Chat Thread not found"));
 
@@ -59,7 +60,7 @@ public class ChatThreadService {
     chatThreadRepository.save(chatThread);
   }
 
-  public String sendMessage(String message, String username) {
+  public ChatMessage sendMessage(String message, String username) {
     return openAIAdapter.sendMessage(message, username);
   }
 }

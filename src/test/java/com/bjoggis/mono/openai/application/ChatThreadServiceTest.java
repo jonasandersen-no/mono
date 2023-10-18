@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.bjoggis.mono.openai.application.port.ChatThreadRepository;
 import com.bjoggis.mono.openai.application.port.InMemoryOpenAIAdapter;
 import com.bjoggis.mono.openai.domain.AccountId;
+import com.bjoggis.mono.openai.domain.ChatMessage;
 import com.bjoggis.mono.openai.domain.ChatThread;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -98,7 +99,9 @@ class ChatThreadServiceTest {
 
     ChatThreadService service = builder.build();
 
-    service.addMessage(builder.getLastThreadId(), AccountId.of(1L), "Hello");
+    ChatMessage chatMessage = new ChatMessage();
+    chatMessage.setMessage("Hello");
+    service.addMessage(builder.getLastThreadId(), AccountId.of(1L), chatMessage);
 
     ChatThread foundChatThread = builder.getChatThreadRepository()
         .findById(builder.getLastThreadId()).get();
@@ -116,8 +119,10 @@ class ChatThreadServiceTest {
 
     ChatThreadService service = builder.build();
 
+    ChatMessage chatMessage = new ChatMessage();
+    chatMessage.setMessage("Hello");
     assertThrows(IllegalArgumentException.class, () -> {
-      service.addMessage(builder.getLastThreadId(), AccountId.of(2L), "Hello");
+      service.addMessage(builder.getLastThreadId(), AccountId.of(2L), chatMessage);
     });
   }
 
@@ -127,10 +132,10 @@ class ChatThreadServiceTest {
     ChatThreadService chatThreadService = builder.build();
     InMemoryOpenAIAdapter openAIAdapter = builder.getInMemoryOpenAIAdapter();
 
-    String response = chatThreadService.sendMessage("Hello", "user1");
+    ChatMessage response = chatThreadService.sendMessage("Hello", "user1");
 
     assertEquals("user1", openAIAdapter.getLastUsername());
-    assertEquals("olleH", response);
+    assertEquals("olleH", response.getMessage());
   }
 
   @Test

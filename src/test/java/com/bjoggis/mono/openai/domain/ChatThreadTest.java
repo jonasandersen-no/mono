@@ -37,7 +37,7 @@ class ChatThreadTest {
   @Test
   void addOneMessageToThreadWillSetTotalMessagesToOne() {
     ChatThread chatThread = new ChatThread();
-    chatThread.addMessage("Hello");
+    chatThread.addMessage(new ChatMessage("Hello"));
 
     assertEquals(1, chatThread.getMessages().size());
   }

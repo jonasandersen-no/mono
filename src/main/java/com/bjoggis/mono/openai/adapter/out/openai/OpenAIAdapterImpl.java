@@ -2,9 +2,9 @@ package com.bjoggis.mono.openai.adapter.out.openai;
 
 import com.bjoggis.mono.openai.application.port.OpenAIAdapter;
 import com.bjoggis.mono.openai.application.port.WebSocketSender;
+import com.bjoggis.mono.openai.domain.ChatMessage;
 import com.theokanning.openai.completion.chat.ChatCompletionChunk;
 import com.theokanning.openai.completion.chat.ChatCompletionRequest;
-import com.theokanning.openai.completion.chat.ChatMessage;
 import com.theokanning.openai.service.OpenAiService;
 import io.reactivex.Flowable;
 import java.time.Duration;
@@ -30,12 +30,12 @@ public class OpenAIAdapterImpl implements OpenAIAdapter {
   }
 
   @Override
-  public String sendMessage(String message, String username) {
+  public com.bjoggis.mono.openai.domain.ChatMessage sendMessage(String message, String username) {
     OpenAiService service = new OpenAiService(properties.token(), Duration.ofMinutes(1));
 
     ChatCompletionRequest request = ChatCompletionRequest.builder()
         .model("gpt-4")
-        .messages(List.of(new ChatMessage("user", message)))
+        .messages(List.of(new com.theokanning.openai.completion.chat.ChatMessage("user", message)))
         .n(1)
         .maxTokens(500)
         .temperature(1.2)
@@ -46,7 +46,8 @@ public class OpenAIAdapterImpl implements OpenAIAdapter {
         request);
 
     AtomicBoolean isFirst = new AtomicBoolean(true);
-    ChatMessage chatMessage = service.mapStreamToAccumulator(flowable)
+    com.theokanning.openai.completion.chat.ChatMessage aiMessage = service.mapStreamToAccumulator(
+            flowable)
         .doOnNext(accumulator -> {
           if (accumulator.isFunctionCall()) {
             if (isFirst.getAndSet(false)) {
@@ -68,6 +69,8 @@ public class OpenAIAdapterImpl implements OpenAIAdapter {
         .lastElement()
         .blockingGet()
         .getAccumulatedMessage();
-    return chatMessage.getContent();
+    ChatMessage chatMessage = new ChatMessage();
+    chatMessage.setMessage(aiMessage.getContent());
+    return chatMessage;
   }
 }

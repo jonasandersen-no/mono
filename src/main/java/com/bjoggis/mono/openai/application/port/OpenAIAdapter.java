@@ -1,6 +1,8 @@
 package com.bjoggis.mono.openai.application.port;
 
+import com.bjoggis.mono.openai.domain.ChatMessage;
+
 public interface OpenAIAdapter {
 
-  String sendMessage(String message, String username);
+  ChatMessage sendMessage(String message, String username);
 }

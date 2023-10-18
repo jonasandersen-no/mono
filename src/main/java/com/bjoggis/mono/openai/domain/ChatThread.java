@@ -7,7 +7,7 @@ import java.util.List;
 public class ChatThread {
 
   private ChatThreadId chatThreadId;
-  private List<String> messages = new LinkedList<>();
+  private List<ChatMessage> messages = new ArrayList<>();
   private AccountId accountId;
 
   public ChatThread() {
@@ -31,11 +31,11 @@ public class ChatThread {
     this.chatThreadId = chatThreadId;
   }
 
-  public List<String> getMessages() {
+  public List<ChatMessage> getMessages() {
     return messages;
   }
 
-  public void setMessages(List<String> messages) {
+  public void setMessages(List<ChatMessage> messages) {
     this.messages = messages;
   }
 
@@ -59,7 +59,7 @@ public class ChatThread {
     return this.accountId.equals(accountId);
   }
 
-  public void addMessage(String message) {
+  public void addMessage(ChatMessage message) {
     messages.add(message);
   }
 }

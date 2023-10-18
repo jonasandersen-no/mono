@@ -4,6 +4,7 @@ import com.bjoggis.mono.openai.application.AIAccountService;
 import com.bjoggis.mono.openai.application.ChatThreadService;
 import com.bjoggis.mono.openai.domain.Account;
 import com.bjoggis.mono.openai.domain.AccountId;
+import com.bjoggis.mono.openai.domain.ChatMessage;
 import com.bjoggis.mono.openai.domain.ChatThreadId;
 import java.security.Principal;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -35,10 +36,13 @@ public class ChatSocketController {
       throw new IllegalArgumentException("Account is not owner of chat thread");
     }
 
-    chatThreadService.addMessage(ChatThreadId.of(request.threadId()), AccountId.of(1L),
-        request.message());
+    ChatMessage chatMessage = new ChatMessage();
+    chatMessage.setMessage(request.message());
 
-    String response = chatThreadService.sendMessage(request.message(), account.getUsername());
+    chatThreadService.addMessage(ChatThreadId.of(request.threadId()), AccountId.of(1L),
+        chatMessage);
+
+    ChatMessage response = chatThreadService.sendMessage(request.message(), account.getUsername());
 
     chatThreadService.addMessage(ChatThreadId.of(request.threadId()), AccountId.of(1L), response);
   }
