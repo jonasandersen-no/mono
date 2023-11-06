@@ -116,6 +116,7 @@
         </executions>
         <configuration>
           <image>
+            <builder>paketobuildpacks/builder-jammy-tiny</builder>
             <name>ghcr.io/notbjoggisatall/${project.artifactId}:${project.version}</name>
             <publish>true</publish>
           </image>
