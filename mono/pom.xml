@@ -57,6 +57,10 @@
       <artifactId>ntfy-log-appender</artifactId>
     </dependency>
     <dependency>
+      <groupId>com.bjoggis</groupId>
+      <artifactId>linode4j</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.theokanning.openai-gpt3-java</groupId>
       <artifactId>service</artifactId>
     </dependency>

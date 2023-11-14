@@ -50,6 +50,11 @@
         <artifactId>kassalapp</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.bjoggis</groupId>
+        <artifactId>linode4j</artifactId>
+        <version>${project.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -76,7 +81,6 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
-
 
     <repository>
       <id>spring-milestones</id>

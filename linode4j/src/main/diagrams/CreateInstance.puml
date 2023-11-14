@@ -1,0 +1,26 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+participant "Controller" as in
+participant "Service" as domain
+participant "Linode Interface" as out
+database "MySQL" as db
+queue "RabbitMQ" as mq
+
+
+in ->  domain: Request to create a Linode Instance
+domain -> out: Create Request
+out -> domain: Create response
+
+domain -> db: Persist
+domain -> domain: Update status: 'creating'
+domain -> mq: Publish event: 'linode_created'
+
+domain -> db: Persist
+
+domain -> in: Response
+
+
+@enduml
