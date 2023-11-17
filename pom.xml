@@ -6,7 +6,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.1.4</version>
+    <version>3.2.0-RC2</version>
     <relativePath/>
   </parent>
   <groupId>com.bjoggis</groupId>
@@ -18,13 +18,14 @@
 
   <properties>
     <java.version>21</java.version>
-    <spring-cloud.version>2022.0.4</spring-cloud.version>
+    <spring-cloud.version>2023.0.0-RC1</spring-cloud.version>
     <bjoggis-common.version>1.4</bjoggis-common.version>
   </properties>
 
   <modules>
     <module>linode4j</module>
     <module>mono</module>
+    <module>kassalapp</module>
   </modules>
 
   <dependencyManagement>
@@ -45,6 +46,11 @@
         <groupId>com.theokanning.openai-gpt3-java</groupId>
         <artifactId>service</artifactId>
         <version>0.16.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.bjoggis</groupId>
+        <artifactId>kassalapp</artifactId>
+        <version>${project.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -72,7 +78,29 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+
+
+    <repository>
+      <id>spring-milestones</id>
+      <name>Spring Milestones</name>
+      <url>https://repo.spring.io/milestone</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
   </repositories>
+
+  <pluginRepositories>
+    <pluginRepository>
+      <id>spring-milestones</id>
+      <name>Spring Milestones</name>
+      <url>https://repo.spring.io/milestone</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
   <distributionManagement>
     <repository>
       <id>reposilite-releases</id>

@@ -50,6 +50,11 @@
     </dependency>
 
     <dependency>
+      <groupId>com.bjoggis</groupId>
+      <artifactId>kassalapp</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>com.bjoggis.common</groupId>
       <artifactId>ntfy-log-appender</artifactId>
     </dependency>
