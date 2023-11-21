@@ -50,7 +50,8 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/notbjoggisatall/mono:0.0.1-SNAPSHOT
+          images: ${{ env.REGISTRY }}/notbjoggisatall/mono
+
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
