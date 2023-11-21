@@ -14,6 +14,8 @@ jobs:
     permissions:
       contents: read
       packages: write
+    env:
+        REGISTRY: ghcr.io
 
     steps:
       - uses: actions/checkout@v3
@@ -37,7 +39,21 @@ jobs:
                 "password": "${{ secrets.REPOSILITE_PASSWORD }}"
             }]
       - name: Build with Maven
-        run: mvn clean deploy -T 4
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+        run: mvn clean deploy
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/notbjoggisatall/mono:0.0.1-SNAPSHOT
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./mono
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

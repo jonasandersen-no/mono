@@ -111,28 +111,6 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>deploy</phase>
-            <goals>
-              <goal>build-image</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <image>
-            <builder>paketobuildpacks/builder-jammy-tiny</builder>
-            <name>ghcr.io/notbjoggisatall/${project.artifactId}:${project.version}</name>
-            <publish>true</publish>
-          </image>
-          <docker>
-            <publishRegistry>
-              <username>NotBjoggisAtAll</username>
-              <password>${env.DOCKER_TOKEN}</password>
-              <url>https://ghcr.io</url>
-            </publishRegistry>
-          </docker>
-        </configuration>
       </plugin>
     </plugins>
   </build>
