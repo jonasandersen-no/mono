@@ -58,13 +58,9 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-      - name: Dispatch workflow
-        env:
-          REPO: notbjoggisatall/infrastructure
-          TOKEN: ${{ secrets.REPO_TOKEN }}
-        run: |
-          curl -X POST \
-            -H "Authorization: token GITHUB_TOKEN" \
-            -H "Accept: application/vnd.github.v3+json" \
-            https://api.github.com/repos/$REPO/dispatches \
-            --data '{"event_type": "bump-mono"}'
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.INFRA_WEBHOOK }}
+          repository: notbjoggisatall/infrastructure
+          event-type: bump-mono
