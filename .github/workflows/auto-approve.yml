@@ -7,4 +7,4 @@ jobs:
   auto-approve:
     permissions:
       pull-requests: write
-    uses: notbjoggisatall/actions/.github/workflows/auto-approve.yml@master
+    uses: notbjoggisatall/actions/.github/workflows/auto-approve.yml@main
