@@ -1,0 +1,12 @@
+name: Auto Approve
+
+on:
+  pull_request
+
+jobs:
+  auto-approve:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - uses: notbjoggisatall/actions/.github/workflows/auto-approve.yml@master
