@@ -1,6 +1,6 @@
 package com.bjoggis.linode.configuration;
 
-import com.bjoggis.linode.adapter.out.LinodeInterface;
+import com.bjoggis.linode.adapter.out.api.LinodeInterface;
 import com.bjoggis.linode.domain.LinodeService;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
