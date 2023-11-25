@@ -16,6 +16,7 @@ import com.bjoggis.mono.openai.domain.ChatThread;
 import com.bjoggis.mono.user.adapter.in.TestPrincipal;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -24,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = ChatThreadController.class)
 @AutoConfigureMockMvc(addFilters = false)
+@AutoConfigureDataJpa
 @Import(TestWebThreadControllerConfiguration.class)
 @ActiveProfiles("test")
 public class WebChatThreadControllerTest {
