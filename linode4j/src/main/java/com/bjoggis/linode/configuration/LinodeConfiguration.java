@@ -1,9 +1,14 @@
 package com.bjoggis.linode.configuration;
 
 import com.bjoggis.linode.adapter.out.api.LinodeInterface;
+import com.bjoggis.linode.adapter.out.database.LinodeInstanceDboRepository;
+import com.bjoggis.linode.adapter.out.database.LinodeRepository;
+import com.bjoggis.linode.adapter.out.database.LinodeRepositoryImpl;
 import com.bjoggis.linode.domain.LinodeService;
+import com.bjoggis.linode.model.LinodeInstance;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
@@ -25,7 +30,13 @@ public class LinodeConfiguration {
   }
 
   @Bean
-  LinodeService linodeService(LinodeInterface linodeInterface) {
-    return new LinodeService(linodeInterface);
+  LinodeRepository linodeRepository(LinodeInstanceDboRepository instanceRepository) {
+    return new LinodeRepositoryImpl(instanceRepository);
+  }
+
+  @Bean
+  LinodeService linodeService(LinodeInterface linodeInterface,
+      LinodeRepository linodeRepository) {
+    return new LinodeService(linodeInterface, linodeRepository);
   }
 }
