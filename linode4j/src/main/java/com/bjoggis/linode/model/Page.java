@@ -1,4 +1,4 @@
-package com.bjoggis.linode.model.instance;
+package com.bjoggis.linode.model;
 
 import java.util.List;
 

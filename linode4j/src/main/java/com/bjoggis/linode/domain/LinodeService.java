@@ -1,10 +1,16 @@
 package com.bjoggis.linode.domain;
 
-import com.bjoggis.linode.adapter.out.LinodeInterface;
+import com.bjoggis.linode.adapter.in.CreateInstanceRequest;
+import com.bjoggis.linode.adapter.in.CreateInstanceResponse;
+import com.bjoggis.linode.adapter.out.api.CreateInstanceRequestBody;
+import com.bjoggis.linode.adapter.out.api.LinodeInterface;
+import com.bjoggis.linode.model.InstanceType;
 import com.bjoggis.linode.model.LinodeInstance;
-import com.bjoggis.linode.model.instance.Page;
+import com.bjoggis.linode.model.Page;
+import com.bjoggis.linode.model.Region;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 
 public class LinodeService {
 
@@ -14,10 +20,29 @@ public class LinodeService {
   public LinodeService(LinodeInterface linodeInterface) {
     this.api = linodeInterface;
 
-//    Page<LinodeInstance> list = api.list(1, 25);
-//    System.out.println(list);
-    String types = api.types();
-    logger.info(types);
+//    Page<InstanceType> types = api.types();
+//    logger.info("Linode instance types: {}", types);
+//
+//    CreateInstanceRequestBody body = new CreateInstanceRequestBody();
+//    body.setRegion("se-sto");
+//    body.setType("g6-nanode-1");
+//    LinodeInstance linodeInstance = api.create(body);
+//    logger.info("Created linode instance: {}", linodeInstance);
   }
 
+  @Cacheable("linode-instance-types")
+  public Page<InstanceType> getLinodeInstanceTypes() {
+    return api.types();
+  }
+
+  @Cacheable("linode-regions")
+  public Page<Region> getLinodeRegions() {
+    return api.regions();
+  }
+
+
+  public CreateInstanceResponse createInstance(CreateInstanceRequest request) {
+
+    return null;
+  }
 }
