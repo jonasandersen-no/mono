@@ -30,6 +30,10 @@ public interface LinodeInterface {
   @PostExchange("/v4/linode/instances")
   LinodeInstance create(@RequestBody CreateInstanceRequestBody instance);
 
+  @GetExchange("/v4/linode/instances/{linodeId}")
+  LinodeInstance getInstance(@PathVariable Long linodeId);
+
   @DeleteExchange("/v4/linode/instances/{linodeId}")
   void delete(@PathVariable Long linodeId);
+
 }
