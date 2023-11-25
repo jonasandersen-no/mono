@@ -1,5 +1,6 @@
 package com.bjoggis.linode.configuration;
 
+import com.bjoggis.linode.adapter.in.LinodeController;
 import com.bjoggis.linode.adapter.out.api.LinodeInterface;
 import com.bjoggis.linode.adapter.out.database.LinodeInstanceDboRepository;
 import com.bjoggis.linode.adapter.out.database.LinodeRepository;
@@ -36,5 +37,10 @@ public class LinodeConfiguration {
   LinodeService linodeService(LinodeInterface linodeInterface,
       LinodeRepository linodeRepository) {
     return new LinodeService(linodeInterface, linodeRepository);
+  }
+
+  @Bean
+  LinodeController linodeController(LinodeService service) {
+    return new LinodeController(service);
   }
 }

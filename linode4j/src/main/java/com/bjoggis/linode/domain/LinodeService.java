@@ -1,7 +1,7 @@
 package com.bjoggis.linode.domain;
 
-import com.bjoggis.linode.adapter.in.CreateInstanceRequest;
 import com.bjoggis.linode.adapter.in.CreateInstanceResponse;
+import com.bjoggis.linode.adapter.in.GetInstanceResponse;
 import com.bjoggis.linode.adapter.out.api.CreateInstanceRequestBody;
 import com.bjoggis.linode.adapter.out.api.LinodeInterface;
 import com.bjoggis.linode.adapter.out.database.LinodeInstanceDbo;
@@ -12,11 +12,14 @@ import com.bjoggis.linode.model.Page;
 import com.bjoggis.linode.model.Region;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationListener;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.transaction.annotation.Transactional;
 
 public class LinodeService implements ApplicationListener<ApplicationStartedEvent> {
 
@@ -40,7 +43,7 @@ public class LinodeService implements ApplicationListener<ApplicationStartedEven
   }
 
 
-  public CreateInstanceResponse createInstance(CreateInstanceRequest request) {
+  public CreateInstanceResponse createInstance() {
 
     final Long id = instanceRepository.getNextAvailableId();
 
@@ -57,7 +60,7 @@ public class LinodeService implements ApplicationListener<ApplicationStartedEven
 
     LinodeInstanceDbo dbo = instanceRepository.saveLinodeInstanceToDb(linodeInstance);
 
-    return null;
+    return CreateInstanceResponse.fromDbo(dbo);
   }
 
   public void deleteInstance(Long linodeId) {
@@ -79,4 +82,39 @@ public class LinodeService implements ApplicationListener<ApplicationStartedEven
 //    deleteInstance(52342940L);
   }
 
+  @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
+  @Transactional
+  public void checkStatusFrequent() {
+    List<LinodeInstanceDbo> instances = instanceRepository.findAllWithStatusNotReady();
+
+    if (instances.isEmpty()) {
+      return;
+    }
+
+    logger.info("Checking status for {} instances", instances.size());
+
+    for (LinodeInstanceDbo instance : instances) {
+      LinodeInstance linodeInstance = api.getInstance(instance.getLinodeId());
+      instanceRepository.updateStatus(instance.getId(), linodeInstance.status());
+    }
+  }
+
+  @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.MINUTES)
+  public void checkStatusFull() {
+    List<LinodeInstanceDbo> instances = instanceRepository.findAllNotDeleted();
+
+    logger.info("Doing full status check for {} instances", instances.size());
+
+    for (LinodeInstanceDbo instance : instances) {
+      LinodeInstance linodeInstance = api.getInstance(instance.getLinodeId());
+      instanceRepository.updateStatus(instance.getId(), linodeInstance.status());
+    }
+  }
+
+  public GetInstanceResponse getLinodeInstanceById(Long id) {
+    Optional<LinodeInstanceDbo> dbo = instanceRepository.findByLinodeIdAndNotDeleted(id);
+
+    return dbo.map(GetInstanceResponse::fromDbo).orElse(null);
+
+  }
 }

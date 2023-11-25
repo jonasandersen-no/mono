@@ -3,6 +3,7 @@ package com.bjoggis.linode.adapter.out.database;
 import com.bjoggis.linode.model.LinodeInstance;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,6 +56,16 @@ public class LinodeRepositoryImpl implements LinodeRepository {
   }
 
   @Override
+  public List<LinodeInstanceDbo> findAllWithStatusNotReady() {
+    return instanceRepository.findAllWithStatusNotReady();
+  }
+
+  @Override
+  public List<LinodeInstanceDbo> findAllNotDeleted() {
+    return instanceRepository.findAllNotDeleted();
+  }
+
+  @Override
   @Transactional
   public void setAsDeleted(Long id) {
     Optional<LinodeInstanceDbo> dbo = instanceRepository.findById(id);
@@ -63,6 +74,17 @@ public class LinodeRepositoryImpl implements LinodeRepository {
       LinodeInstanceDbo linodeInstanceDbo = dbo.get();
       linodeInstanceDbo.setDeleted(true);
       linodeInstanceDbo.setDeletedAt(new Date());
+      instanceRepository.save(linodeInstanceDbo);
+    }
+  }
+
+  @Override
+  public void updateStatus(Long id, String status) {
+    Optional<LinodeInstanceDbo> dbo = instanceRepository.findById(id);
+
+    if (dbo.isPresent()) {
+      LinodeInstanceDbo linodeInstanceDbo = dbo.get();
+      linodeInstanceDbo.setStatus(status);
       instanceRepository.save(linodeInstanceDbo);
     }
   }
