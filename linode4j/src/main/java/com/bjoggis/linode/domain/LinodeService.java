@@ -6,6 +6,7 @@ import com.bjoggis.linode.adapter.out.api.CreateInstanceRequestBody;
 import com.bjoggis.linode.adapter.out.api.LinodeInterface;
 import com.bjoggis.linode.adapter.out.database.LinodeInstanceDbo;
 import com.bjoggis.linode.adapter.out.database.LinodeRepository;
+import com.bjoggis.linode.configuration.properties.LinodeProperties;
 import com.bjoggis.linode.model.InstanceType;
 import com.bjoggis.linode.model.LinodeInstance;
 import com.bjoggis.linode.model.Page;
@@ -23,11 +24,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class LinodeService implements ApplicationListener<ApplicationStartedEvent> {
 
-  private final LinodeInterface api;
-  private final LinodeRepository instanceRepository;
   private final Logger logger = LoggerFactory.getLogger(LinodeService.class);
 
-  public LinodeService(LinodeInterface linodeInterface, LinodeRepository instanceRepository) {
+  private final LinodeProperties properties;
+  private final LinodeInterface api;
+  private final LinodeRepository instanceRepository;
+
+  public LinodeService(LinodeProperties properties, LinodeInterface linodeInterface,
+      LinodeRepository instanceRepository) {
+    this.properties = properties;
     this.api = linodeInterface;
     this.instanceRepository = instanceRepository;
   }
@@ -53,7 +58,7 @@ public class LinodeService implements ApplicationListener<ApplicationStartedEven
     body.setLabel("minecraft-auto-config-" + id);
     body.setType("g6-nanode-1");
     body.setTags(List.of("minecraft", "auto-created"));
-    body.setRootPassword("mag*cdt!ykd7KMF5xhc");
+    body.setRootPassword((properties.instance().password()));
 
     LinodeInstance linodeInstance = api.create(body);
     logger.info("Created linode instance: {}", linodeInstance);
