@@ -37,4 +37,11 @@ public class LinodeCommands {
 
     return DesignTable.designTableStyle(GetInstanceResponse.class, instances);
   }
+
+  @Command(command = "delete")
+  public String delete(Long id) {
+    service.deleteInstance(id);
+
+    return "Instance deleted: " + id;
+  }
 }
