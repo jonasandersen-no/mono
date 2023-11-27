@@ -122,4 +122,12 @@ public class LinodeService implements ApplicationListener<ApplicationStartedEven
     return dbo.map(GetInstanceResponse::fromDbo).orElse(null);
 
   }
+
+  public List<GetInstanceResponse> getAllActiveLinodeInstances() {
+    List<LinodeInstanceDbo> allNotDeleted = instanceRepository.findAllNotDeleted();
+
+    return allNotDeleted.stream()
+        .map(GetInstanceResponse::fromDbo)
+        .toList();
+  }
 }
