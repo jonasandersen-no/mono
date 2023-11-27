@@ -1,6 +1,7 @@
 package com.bjoggis.debug;
 
 import com.bjoggis.debug.command.LinodeCommands;
+import com.bjoggis.linode.configuration.properties.LinodeProperties;
 import com.bjoggis.linode.domain.LinodeService;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +12,7 @@ import org.springframework.shell.command.annotation.EnableCommand;
 public class DebugConfiguration {
 
   @Bean
-  LinodeCommands linodeCommands(LinodeService service) {
-    return new LinodeCommands(service);
+  LinodeCommands linodeCommands(LinodeService service, LinodeProperties properties) {
+    return new LinodeCommands(service, properties);
   }
 }
