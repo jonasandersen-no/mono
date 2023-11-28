@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  minecraft:
+    image: itzg/minecraft-server
+    container_name: minecraft
+    environment:
+      - "EULA=TRUE"
+      - "TYPE=PAPER"
+      - "MEMORY=3G"
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      # attach a directory relative to the directory containing this compose file
+      - /usr/local/minecraft-data:/data

@@ -56,7 +56,7 @@ public class LinodeService implements ApplicationListener<ApplicationStartedEven
     body.setRegion("se-sto");
     body.setImage("linode/ubuntu22.04");
     body.setLabel("minecraft-auto-config-" + id);
-    body.setType("g6-nanode-1");
+    body.setType("g6-standard-2");
     body.setTags(List.of("minecraft", "auto-created"));
     body.setRootPassword((properties.instance().password()));
 
