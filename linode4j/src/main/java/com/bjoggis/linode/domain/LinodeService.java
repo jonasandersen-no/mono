@@ -2,6 +2,7 @@ package com.bjoggis.linode.domain;
 
 import com.bjoggis.linode.adapter.in.CreateInstanceResponse;
 import com.bjoggis.linode.adapter.in.GetInstanceResponse;
+import com.bjoggis.linode.adapter.out.api.AttachVolumeRequestBody;
 import com.bjoggis.linode.adapter.out.api.CreateInstanceRequestBody;
 import com.bjoggis.linode.adapter.out.api.LinodeInterface;
 import com.bjoggis.linode.adapter.out.database.LinodeInstanceDbo;
@@ -11,6 +12,7 @@ import com.bjoggis.linode.model.InstanceType;
 import com.bjoggis.linode.model.LinodeInstance;
 import com.bjoggis.linode.model.Page;
 import com.bjoggis.linode.model.Region;
+import com.bjoggis.linode.model.Volume;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -85,6 +87,9 @@ public class LinodeService implements ApplicationListener<ApplicationStartedEven
   public void onApplicationEvent(ApplicationStartedEvent event) {
 //    CreateInstanceResponse instance = createInstance(null);
 //    deleteInstance(52342940L);
+
+    Page<Volume> volumes = api.volumes();
+    logger.info("Volumes: {}", volumes);
   }
 
   @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
@@ -129,5 +134,13 @@ public class LinodeService implements ApplicationListener<ApplicationStartedEven
     return allNotDeleted.stream()
         .map(GetInstanceResponse::fromDbo)
         .toList();
+  }
+
+  public void attachVolume(Long linodeId) {
+    AttachVolumeRequestBody body = new AttachVolumeRequestBody();
+    body.setLinodeId(linodeId);
+    body.setPersistAcrossBoots(false);
+
+    api.attach(2034287L, body);
   }
 }

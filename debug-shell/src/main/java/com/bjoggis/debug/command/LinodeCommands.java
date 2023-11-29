@@ -60,8 +60,18 @@ public class LinodeCommands {
     return "Instance deleted: " + id;
   }
 
+  @Command(command = "attach")
+  public String attach(Long id) {
+    service.attachVolume(id);
+
+    return "Volume attached to instance: " + id;
+  }
+
   @Command(command = "connect")
   public String connect(Long id) throws IOException {
+
+//    service.attachVolume(id);
+
     GetInstanceResponse instance = service.getLinodeInstanceById(id);
     final String username = "root";
     final String password = properties.instance().password();
@@ -80,16 +90,52 @@ public class LinodeCommands {
       session.addPasswordIdentity(password);
       session.auth().verify(defaultTimeoutSeconds, TimeUnit.SECONDS);
 
-      String chmodOutput = session.executeRemoteCommand("chmod +x run");
-      logger.info(chmodOutput);
-      String response = session.executeRemoteCommand("./run");
-      logger.info(response);
+
+      executeCommand(session, "DEBIAN_FRONTEND=noninteractive");
+      executeCommand(session, "echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections");
+      executeCommand(session, "apt-get update");
+      executeCommand(session, "apt-get -y install ca-certificates curl gnupg");
+      executeCommand(session, "install -m 0755 -d /etc/apt/keyrings");
+      executeCommand(session,
+          "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --batch --dearmor -o /etc/apt/keyrings/docker.gpg");
+      executeCommand(session, "chmod a+r /etc/apt/keyrings/docker.gpg");
+      executeCommand(session, """
+          echo \\
+            "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \\
+            $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \\
+            tee /etc/apt/sources.list.d/docker.list > /dev/null
+          """);
+      executeCommand(session, "apt-get update");
+      executeCommand(session, "apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin");
+
+      executeCommand(session, "mkdir \"/mnt/minecraft-volume-01\"");
+      executeCommand(session, "mount \"/dev/disk/by-id/scsi-0Linode_Volume_minecraft-volume-01\" \"/mnt/minecraft-volume-01\"");
+      executeCommand(session, "cat \"/mnt/minecraft-volume-01/test-file\"");
+
+      executeCommand(session, "docker compose up -d");
+
+
+
+//      String chmodOutput = session.executeRemoteCommand("chmod +x run");
+//      logger.info(chmodOutput);
+//      String response = session.executeRemoteCommand("./run");
+//      logger.info(response);
 
       return "OK";
     } finally {
       client.stop();
     }
 
+  }
+
+  private void executeCommand(final ClientSession session, final String command) {
+    try {
+      final String response = session.executeRemoteCommand(command);
+      logger.info("Running command {}. Response: \n {}", command, response);
+    } catch (IOException e) {
+      logger.warn("Could not execute command: {}", command, e);
+      throw new RuntimeException(e);
+    }
   }
 
   private void uploadFile(SshClient sshClient, String username, String host,

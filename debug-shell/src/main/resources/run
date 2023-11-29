@@ -16,4 +16,8 @@ sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plug
 
 sudo docker compose up -d
 
+mkdir "/mnt/minecraft-volume-01"
 
+mount "/dev/disk/by-id/scsi-0Linode_Volume_minecraft-volume-01" "/mnt/minecraft-volume-01"
+
+cat "/mnt/minecraft-volume-01/test-file"

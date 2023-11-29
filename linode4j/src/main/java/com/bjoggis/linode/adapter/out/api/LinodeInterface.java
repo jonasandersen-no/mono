@@ -4,6 +4,7 @@ import com.bjoggis.linode.model.InstanceType;
 import com.bjoggis.linode.model.LinodeInstance;
 import com.bjoggis.linode.model.Page;
 import com.bjoggis.linode.model.Region;
+import com.bjoggis.linode.model.Volume;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.validation.annotation.Validated;
@@ -35,5 +36,11 @@ public interface LinodeInterface {
 
   @DeleteExchange("/v4/linode/instances/{linodeId}")
   void delete(@PathVariable Long linodeId);
+
+  @GetExchange("/v4/volumes")
+  Page<Volume> volumes();
+
+  @PostExchange("/v4/volumes/{volumeId}/attach")
+  Volume attach(@PathVariable Long volumeId, @RequestBody AttachVolumeRequestBody body);
 
 }
