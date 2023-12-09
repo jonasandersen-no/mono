@@ -8,23 +8,27 @@ import com.bjoggis.linode.adapter.out.api.LinodeInterface;
 import com.bjoggis.linode.adapter.out.database.LinodeInstanceDbo;
 import com.bjoggis.linode.adapter.out.database.LinodeRepository;
 import com.bjoggis.linode.configuration.properties.LinodeProperties;
+import com.bjoggis.linode.domain.event.InstanceCreatedEvent;
+import com.bjoggis.linode.domain.event.InstanceRunningEvent;
+import com.bjoggis.linode.domain.event.LinodeEventPublisher;
+import com.bjoggis.linode.domain.event.VolumeAttachedEvent;
 import com.bjoggis.linode.model.InstanceType;
 import com.bjoggis.linode.model.LinodeInstance;
 import com.bjoggis.linode.model.Page;
 import com.bjoggis.linode.model.Region;
-import com.bjoggis.linode.model.Volume;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
-public class LinodeService implements ApplicationListener<ApplicationStartedEvent> {
+public class LinodeService {
+
+  private static final long VOLUME_ID = 2034287L;
 
   private final Logger logger = LoggerFactory.getLogger(LinodeService.class);
 
@@ -32,11 +36,14 @@ public class LinodeService implements ApplicationListener<ApplicationStartedEven
   private final LinodeInterface api;
   private final LinodeRepository instanceRepository;
 
+  private final LinodeEventPublisher eventPublisher;
+
   public LinodeService(LinodeProperties properties, LinodeInterface linodeInterface,
-      LinodeRepository instanceRepository) {
+      LinodeRepository instanceRepository, LinodeEventPublisher eventPublisher) {
     this.properties = properties;
     this.api = linodeInterface;
     this.instanceRepository = instanceRepository;
+    this.eventPublisher = eventPublisher;
   }
 
   @Cacheable("linode-instance-types")
@@ -67,6 +74,8 @@ public class LinodeService implements ApplicationListener<ApplicationStartedEven
 
     LinodeInstanceDbo dbo = instanceRepository.saveLinodeInstanceToDb(linodeInstance);
 
+    eventPublisher.onInstanceCreated(new InstanceCreatedEvent(dbo.getLinodeId(), dbo.getCreated()));
+
     return CreateInstanceResponse.fromDbo(dbo);
   }
 
@@ -83,15 +92,6 @@ public class LinodeService implements ApplicationListener<ApplicationStartedEven
     logger.info("Deleted linode instance: {}", linodeId);
   }
 
-  @Override
-  public void onApplicationEvent(ApplicationStartedEvent event) {
-//    CreateInstanceResponse instance = createInstance(null);
-//    deleteInstance(52342940L);
-
-    Page<Volume> volumes = api.volumes();
-    logger.info("Volumes: {}", volumes);
-  }
-
   @Scheduled(fixedDelay = 10, timeUnit = TimeUnit.SECONDS)
   @Transactional
   public void checkStatusFrequent() {
@@ -105,7 +105,13 @@ public class LinodeService implements ApplicationListener<ApplicationStartedEven
 
     for (LinodeInstanceDbo instance : instances) {
       LinodeInstance linodeInstance = api.getInstance(instance.getLinodeId());
+
+      logger.info("Linode instance: {} has status: {}", instance.getLinodeId(), linodeInstance.status());
       instanceRepository.updateStatus(instance.getId(), linodeInstance.status());
+
+      if ("running".equalsIgnoreCase(linodeInstance.status())) {
+        eventPublisher.onInstanceRunning(new InstanceRunningEvent(instance.getLinodeId()));
+      }
     }
   }
 
@@ -136,11 +142,18 @@ public class LinodeService implements ApplicationListener<ApplicationStartedEven
         .toList();
   }
 
-  public void attachVolume(Long linodeId) {
+  public void attachVolume(Long linodeId) throws InterruptedException {
     AttachVolumeRequestBody body = new AttachVolumeRequestBody();
     body.setLinodeId(linodeId);
     body.setPersistAcrossBoots(false);
 
-    api.attach(2034287L, body);
+    api.attach(VOLUME_ID, body);
+
+    Thread.sleep(Duration.ofSeconds(5));
+    eventPublisher.onVolumeAttached(new VolumeAttachedEvent(linodeId, VOLUME_ID));
+  }
+
+  public void setupMinecraftServer(Long linodeId) {
+    logger.info("Setting up minecraft server for linode instance: {}", linodeId);
   }
 }

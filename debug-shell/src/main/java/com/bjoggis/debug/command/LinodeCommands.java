@@ -62,7 +62,11 @@ public class LinodeCommands {
 
   @Command(command = "attach")
   public String attach(Long id) {
-    service.attachVolume(id);
+    try {
+      service.attachVolume(id);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
+    }
 
     return "Volume attached to instance: " + id;
   }
