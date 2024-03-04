@@ -6,26 +6,27 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.2.0</version>
+    <version>3.2.3</version>
     <relativePath/>
   </parent>
-  <groupId>com.bjoggis</groupId>
-  <artifactId>mono-parent</artifactId>
-  <version>0.0.2-SNAPSHOT</version>
+  <groupId>no.jonasandersen.mono</groupId>
+  <artifactId>mono</artifactId>
+  <version>0</version>
   <packaging>pom</packaging>
   <name>Bjoggis Mono</name>
   <description>Project containing all kinds of stuff</description>
 
   <properties>
     <java.version>21</java.version>
-    <spring-cloud.version>2023.0.0-RC1</spring-cloud.version>
+    <spring-cloud.version>2023.0.0</spring-cloud.version>
     <bjoggis-common.version>1.4</bjoggis-common.version>
   </properties>
 
   <modules>
     <module>linode4j</module>
-    <module>mono</module>
+    <module>app</module>
     <module>kassalapp</module>
+    <module>test</module>
   </modules>
 
   <dependencyManagement>
@@ -48,13 +49,19 @@
         <version>0.18.2</version>
       </dependency>
       <dependency>
-        <groupId>com.bjoggis</groupId>
+        <groupId>no.jonasandersen.mono</groupId>
         <artifactId>kassalapp</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>com.bjoggis</groupId>
+        <groupId>no.jonasandersen.mono</groupId>
         <artifactId>linode4j</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>no.jonasandersen.mono</groupId>
+        <artifactId>test</artifactId>
+        <scope>test</scope>
         <version>${project.version}</version>
       </dependency>
     </dependencies>
@@ -131,7 +138,7 @@
             <scope>import</scope>
           </dependency>
           <dependency>
-            <groupId>com.bjoggis</groupId>
+            <groupId>no.jonasandersen.mono</groupId>
             <artifactId>debug-shell</artifactId>
             <version>${project.version}</version>
           </dependency>

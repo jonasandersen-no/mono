@@ -1,0 +1,11 @@
+services:
+  mono:
+    image: bjoggis/mono:v0.0.1-x86_64
+    container_name: mono
+    ports:
+      - 8080:8080
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_CLOUD_CONFIG_USERNAME=${SPRING_CLOUD_CONFIG_SECURITY_USERNAME}
+      - SPRING_CLOUD_CONFIG_PASSWORD=${SPRING_CLOUD_CONFIG_SECURITY_PASSWORD}
+    restart: always

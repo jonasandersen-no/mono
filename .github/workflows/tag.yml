@@ -2,8 +2,8 @@ name: Build latest master and deploy
 
 on:
   push:
-    branches:
-      - master
+    tags:
+      - v*
 
 jobs:
   build:
@@ -39,7 +39,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build with Maven
-        run: mvn clean package -Pnative
+        run: mvn spring-boot:build-image -Pnative
 
       - name: Push Images to Docker Registry
         run: docker push -a bjoggis/mono
@@ -58,10 +58,10 @@ jobs:
           timeout_minutes: 5
           retry_wait_seconds: 60
           max_attempts: 8
-          command: docker pull bjoggis/mono:v0.0.0-aarch_64
+          command: docker pull bjoggis/mono:${{ github.ref_name }}-aarch_64
       - name: create-manifest
         run: |
-          docker manifest create bjoggis/mono:v0.0.0 --amend bjoggis/mono:v0.0.0-x86_64 --amend bjoggis/mono:v0.0.0-aarch_64
-          docker manifest push bjoggis/mono:v0.0.0
-          docker manifest create bjoggis/mono:latest --amend bjoggis/mono:v0.0.0-x86_64 --amend bjoggis/mono:v0.0.0-aarch_64
+          docker manifest create bjoggis/mono:${{ github.ref_name }} --amend bjoggis/mono:${{ github.ref_name }}-x86_64 --amend bjoggis/mono:${{ github.ref_name }}-aarch_64
+          docker manifest push bjoggis/mono:${{ github.ref_name }}
+          docker manifest create bjoggis/mono:latest --amend bjoggis/mono:${{ github.ref_name }}-x86_64 --amend bjoggis/mono:${{ github.ref_name }}-aarch_64
           docker manifest push bjoggis/mono:latest

@@ -5,8 +5,8 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.bjoggis</groupId>
-    <artifactId>mono-parent</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <artifactId>mono</artifactId>
+    <version>0</version>
   </parent>
 
   <artifactId>debug-shell</artifactId>
@@ -24,7 +24,7 @@
     </dependency>
 
     <dependency>
-      <groupId>com.bjoggis</groupId>
+      <groupId>no.jonasandersen.mono</groupId>
       <artifactId>linode4j</artifactId>
       <version>${project.version}</version>
     </dependency>
